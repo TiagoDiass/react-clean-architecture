@@ -7,7 +7,8 @@
   "author": "Tiago Dias <tiago.costadiasss@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "start": "webpack-dev-server --open",
+    "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "yarn test --watch",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage"
@@ -18,6 +19,7 @@
     "@types/node": "^14.14.25",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
+    "clean-webpack-plugin": "^3.0.0",
     "faker": "^5.4.0",
     "git-commit-msg-linter": "^3.0.0",
     "husky": "^5.0.9",
