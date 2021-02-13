@@ -23,5 +23,8 @@
     "lint-staged": "^10.5.4",
     "ts-jest": "^26.5.1",
     "typescript": "^4.1.4"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }
