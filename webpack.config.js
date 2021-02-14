@@ -23,6 +23,16 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
+        test: /\.(png|jpeg|jpg|gif|svg)$/,
+        exclude: /node_modules/,
+        loader: 'url-loader',
+        options: {
+          limit: 1000,
+          name: '../images/[name].[ext]',
+          publicPath: '../../', // If I don't use it, webpack will try to take the image in the js folder
+        },
+      },
+      {
         test: /\.scss$/,
         use: [
           {

@@ -7,7 +7,7 @@
   "author": "Tiago Dias <tiago.costadiasss@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --open",
+    "start": "webpack serve --open",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "yarn test --watch",
     "test:staged": "yarn test --findRelatedTests",
@@ -22,6 +22,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.0.2",
     "faker": "^5.4.0",
+    "file-loader": "^6.2.0",
     "git-commit-msg-linter": "^3.0.0",
     "husky": "^5.0.9",
     "identity-obj-proxy": "^3.0.0",
@@ -33,6 +34,7 @@
     "ts-jest": "^26.5.1",
     "ts-loader": "^8.0.17",
     "typescript": "^4.1.4",
+    "url-loader": "^4.1.1",
     "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
