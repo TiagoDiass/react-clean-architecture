@@ -32,6 +32,8 @@ button {
   border: none;
   line-height: 60px;
   transition: all 0.2s ease;
+  text-transform: uppercase;
+  font-weight: 500;
 
   &:hover {
     opacity: 0.9;
@@ -44,23 +46,6 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  .header {
-    display: flex;
-    flex-direction: column;
-    border-top: 40px solid $primaryDark;
-    background-color: $primary;
-    align-items: center;
-
-    img {
-      margin-top: 40px;
-    }
-
-    h1 {
-      color: $white;
-      margin: 16px 0px 40px;
-    }
-  }
 
   .form {
     display: flex;
@@ -126,10 +111,5 @@ button {
         color: $primaryLight;
       }
     }
-  }
-
-  .footer {
-    background-color: $primary;
-    height: 52px;
   }
 }
