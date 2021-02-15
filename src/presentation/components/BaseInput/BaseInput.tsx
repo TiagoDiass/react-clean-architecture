@@ -1,10 +1,12 @@
 import React from 'react';
 import Styles from './BaseInput.styles.scss';
 
-const BaseInput: React.FC = () => {
+type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+
+const BaseInput: React.FC<Props> = (props: Props) => {
   return (
     <div className={Styles.inputWrapper}>
-      <input type='email' name='email' placeholder='Digite seu e-mail' />
+      <input {...props} />
       <span className={Styles.status}>🔴</span>
     </div>
   );
