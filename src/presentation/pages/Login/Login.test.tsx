@@ -14,4 +14,24 @@ describe('Login Component', () => {
     const submitButton = getByTestId('submit') as HTMLButtonElement;
     expect(submitButton.disabled).toBe(true);
   });
+
+  it('should start email and passoword inputs with an "invalid" state', () => {
+    const { getByTestId } = render(<Login />);
+    const emailStatus = getByTestId('email-status');
+    expect(emailStatus.title).toBe('Campo obrigatório');
+    expect(emailStatus.textContent).toBe('🔴');
+
+    const passwordStatus = getByTestId('password-status');
+    expect(passwordStatus.title).toBe('Campo obrigatório');
+    expect(passwordStatus.textContent).toBe('🔴');
+  });
+
+  it('should start with empty email and password inputs', () => {
+    const { getByTestId } = render(<Login />);
+    const emailInput = getByTestId('email-input') as HTMLInputElement;
+    const passwordInput = getByTestId('password-input') as HTMLInputElement;
+
+    expect(emailInput.value).toBe('');
+    expect(passwordInput.value).toBe('');
+  });
 });
