@@ -11,6 +11,7 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy();
+  validationSpy.errorMessage = faker.random.words();
   const sut = render(<Login validation={validationSpy} />);
 
   return {
@@ -44,9 +45,10 @@ describe('Login Component', () => {
   });
 
   it('should start email and passoword inputs with an "invalid" state', () => {
-    const { sut } = makeSut();
+    const { sut, validationSpy } = makeSut();
+
     const emailStatus = sut.getByTestId('email-status');
-    expect(emailStatus.title).toBe('Campo obrigatório');
+    expect(emailStatus.title).toBe(validationSpy.errorMessage);
     expect(emailStatus.textContent).toBe('🔴');
 
     const passwordStatus = sut.getByTestId('password-status');
@@ -72,5 +74,17 @@ describe('Login Component', () => {
     fireEvent.input(passwordInput, { target: { value: fakePassword } });
     expect(validationSpy.fieldName).toBe('password');
     expect(validationSpy.fieldValue).toBe(fakePassword);
+  });
+
+  it('should show an email error if validation fails', () => {
+    const { sut, validationSpy } = makeSut();
+    const errorMessage = faker.random.words();
+
+    const emailInput = sut.getByTestId('email-input');
+    fireEvent.input(emailInput, { target: { value: faker.internet.email() } });
+    const emailStatus = sut.getByTestId('email-status');
+
+    expect(emailStatus.title).toBe(validationSpy.errorMessage);
+    expect(emailStatus.textContent).toBe('🔴');
   });
 });
