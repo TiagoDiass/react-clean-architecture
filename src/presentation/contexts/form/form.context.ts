@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export type FormContextState = {
   isLoading: boolean;
   email: string;
+  password: string;
   emailError: string;
   passwordError: string;
   mainError: string;

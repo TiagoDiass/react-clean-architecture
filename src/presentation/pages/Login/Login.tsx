@@ -3,23 +3,29 @@ import Styles from './Login.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
+import { FormContextState } from '@/presentation/contexts/form/form.context';
 
 type Props = {
   validation: Validation;
 };
 
 const Login: React.FC<Props> = ({ validation }) => {
-  const [state, setState] = useState({
+  const [state, setState] = useState<FormContextState>({
     isLoading: false,
     email: '',
+    password: '',
     emailError: 'Campo obrigatório',
     passwordError: 'Campo obrigatório',
     mainError: '',
   });
 
   useEffect(() => {
-    validation.validate({ email: state.email })
-  }, [state.email])
+    validation.validate({ email: state.email });
+  }, [state.email]);
+
+  useEffect(() => {
+    validation.validate({ password: state.password });
+  }, [state.password]);
 
   return (
     <div className={Styles.login}>
@@ -29,7 +35,7 @@ const Login: React.FC<Props> = ({ validation }) => {
         <form className={Styles.form}>
           <h2>Login</h2>
 
-          <BaseInput type='email' name='email' placeholder='Digite seu e-mail' /> = (event: ) => {}
+          <BaseInput type='email' name='email' placeholder='Digite seu e-mail' />
 
           <BaseInput type='password' name='password' placeholder='Digite sua senha' />
 
