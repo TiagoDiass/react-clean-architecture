@@ -17,10 +17,10 @@ const BaseInput: React.FC<Props> = (props: Props) => {
   };
 
   // Getters helpers
-  const getStatus = (): string => '🔴';
+  const getStatus = (): string => (error ? '🔴' : '🟢');
 
   const getTitle = (): string => {
-    return error;
+    return error || 'Tudo certo!';
   };
 
   const getTestId = () => `${props.name}-status`;
