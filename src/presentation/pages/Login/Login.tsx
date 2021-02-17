@@ -34,6 +34,10 @@ const Login: React.FC<Props> = ({ validation, authentication }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
+    if (state.isLoading || isThereAnError) {
+      return;
+    }
+
     setState({
       ...state,
       isLoading: true,
@@ -47,7 +51,7 @@ const Login: React.FC<Props> = ({ validation, authentication }) => {
       <Header />
 
       <Context.Provider value={{ state, setState }}>
-        <form className={Styles.form} onSubmit={handleSubmit}>
+        <form data-testid='form' className={Styles.form} onSubmit={handleSubmit}>
           <h2>Login</h2>
 
           <BaseInput type='email' name='email' placeholder='Digite seu e-mail' />

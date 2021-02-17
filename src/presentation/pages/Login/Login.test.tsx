@@ -158,4 +158,14 @@ describe('Login Component', () => {
       password: fakePassword,
     });
   });
+
+  // Teste pra previnir que o form tenha um submit de uma forma manual, como no console do browser
+  it('should prevent the submit of the form if there is an error', () => {
+    const validationError = faker.random.words();
+    const { sut, authenticationSpy } = makeSut({ validationError });
+
+    fillEmailField(sut);
+    fireEvent.submit(sut.getByTestId('form'));
+    expect(authenticationSpy.callsCount).toBe(0);
+  });
 });
