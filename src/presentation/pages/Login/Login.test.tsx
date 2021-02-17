@@ -1,6 +1,8 @@
 import React from 'react';
 import faker from 'faker';
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import 'jest-localstorage-mock';
+
 import Login from './Login';
 import { AuthenticationSpy, ValidationStub } from '@/presentation/test';
 import { InvalidCredentialsError } from '@/domain/errors';
@@ -63,6 +65,7 @@ const verifyInputStatus = ({ sut, fieldName, validationError }: VerifyInputStatu
 };
 
 describe('Login Component', () => {
+  beforeEach(() => localStorage.clear());
   afterEach(cleanup);
 
   it('should not render Spinner and error on start', () => {
@@ -170,7 +173,7 @@ describe('Login Component', () => {
     expect(authenticationSpy.callsCount).toBe(0);
   });
 
-  it('should present an errorm message and hide spinner if Authentication fails', async () => {
+  it('should present an error message and hide spinner if Authentication fails', async () => {
     const { sut, authenticationSpy } = makeSut();
 
     const error = new InvalidCredentialsError();
@@ -188,5 +191,17 @@ describe('Login Component', () => {
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
     expect(errorWrapper.childElementCount).toBe(1);
+  });
+
+  it('should add accessToken on localStorage if Authentication succeeds', async () => {
+    const { sut, authenticationSpy } = makeSut();
+    simulateValidSubmit(sut);
+
+    await waitFor(() => sut.getByTestId('form'));
+
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      'accessToken',
+      authenticationSpy.account.accessToken
+    );
   });
 });
