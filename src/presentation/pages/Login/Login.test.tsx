@@ -1,11 +1,25 @@
 import React from 'react';
-import { render, RenderResult, fireEvent, cleanup } from '@testing-library/react';
 import faker from 'faker';
+import { render, RenderResult, fireEvent, cleanup } from '@testing-library/react';
 import Login from './Login';
 import { ValidationStub } from '@/presentation/test';
+import { Authentication, AuthenticationParams } from '@/domain/usecases';
+import { AccountModel } from '@/domain/models';
+import { mockAccountModel } from '@/domain/test';
+
+class AuthenticationSpy implements Authentication {
+  account = mockAccountModel();
+  params: AuthenticationParams;
+
+  async auth(params: AuthenticationParams): Promise<AccountModel> {
+    this.params = params;
+    return Promise.resolve(this.account);
+  }
+}
 
 type SutTypes = {
   sut: RenderResult;
+  authenticationSpy: AuthenticationSpy;
 };
 
 type SutParams = {
@@ -15,10 +29,14 @@ type SutParams = {
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub();
   validationStub.errorMessage = params?.validationError;
-  const sut = render(<Login validation={validationStub} />);
+
+  const authenticationSpy = new AuthenticationSpy();
+
+  const sut = render(<Login validation={validationStub} authentication={authenticationSpy} />);
 
   return {
     sut,
+    authenticationSpy,
   };
 };
 
@@ -130,7 +148,28 @@ describe('Login Component', () => {
 
     fireEvent.click(submitButton);
     const loadingSpinner = sut.getByTestId('loading-spinner');
-
     expect(loadingSpinner).toBeTruthy();
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should call Authentication with correct values', () => {
+    const { sut, authenticationSpy } = makeSut();
+    const emailInput = sut.getByTestId('email-input');
+    const passwordInput = sut.getByTestId('password-input');
+    const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
+
+    const fakeEmail = faker.internet.email();
+    const fakePassword = faker.internet.password();
+
+    fireEvent.input(emailInput, { target: { value: fakeEmail } });
+    fireEvent.input(passwordInput, { target: { value: fakePassword } });
+
+    expect(submitButton.disabled).toBe(false);
+
+    fireEvent.click(submitButton);
+    expect(authenticationSpy.params).toEqual({
+      email: fakeEmail,
+      password: fakePassword,
+    });
   });
 });

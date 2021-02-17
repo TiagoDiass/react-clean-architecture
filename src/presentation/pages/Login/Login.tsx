@@ -4,12 +4,14 @@ import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presenta
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
 import { FormContextState } from '@/presentation/contexts/form/form.context';
+import { Authentication } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
+  authentication: Authentication;
 };
 
-const Login: React.FC<Props> = ({ validation }) => {
+const Login: React.FC<Props> = ({ validation, authentication }) => {
   const [state, setState] = useState<FormContextState>({
     isLoading: false,
     email: '',
@@ -29,13 +31,15 @@ const Login: React.FC<Props> = ({ validation }) => {
 
   const isThereAnError = !!(state.emailError || state.passwordError);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     setState({
       ...state,
       isLoading: true,
     });
+
+    await authentication.auth({ email: state.email, password: state.password });
   };
 
   return (
@@ -50,7 +54,7 @@ const Login: React.FC<Props> = ({ validation }) => {
 
           <BaseInput type='password' name='password' placeholder='Digite sua senha' />
 
-          <button data-testid='submit' disabled={isThereAnError} type='submit'>
+          <button data-testid='submit' disabled={isThereAnError || state.isLoading} type='submit'>
             Entrar
           </button>
 
