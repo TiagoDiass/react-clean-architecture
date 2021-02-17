@@ -1,8 +1,9 @@
 import React from 'react';
 import faker from 'faker';
-import { render, RenderResult, fireEvent, cleanup } from '@testing-library/react';
+import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import Login from './Login';
 import { AuthenticationSpy, ValidationStub } from '@/presentation/test';
+import { InvalidCredentialsError } from '@/domain/errors';
 
 type SutTypes = {
   sut: RenderResult;
@@ -167,5 +168,25 @@ describe('Login Component', () => {
     fillEmailField(sut);
     fireEvent.submit(sut.getByTestId('form'));
     expect(authenticationSpy.callsCount).toBe(0);
+  });
+
+  it('should present an errorm message and hide spinner if Authentication fails', async () => {
+    const { sut, authenticationSpy } = makeSut();
+
+    const error = new InvalidCredentialsError();
+
+    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error));
+
+    simulateValidSubmit(sut);
+
+    const errorWrapper = sut.getByTestId('error-wrapper');
+
+    await waitFor(() => errorWrapper);
+
+    const mainError = sut.getByTestId('main-error');
+    expect(mainError.textContent).toBe(error.message);
+
+    // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
+    expect(errorWrapper.childElementCount).toBe(1);
   });
 });
