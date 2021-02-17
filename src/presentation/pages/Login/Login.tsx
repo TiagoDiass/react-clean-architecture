@@ -27,6 +27,8 @@ const Login: React.FC<Props> = ({ validation }) => {
     });
   }, [state.email, state.password]);
 
+  const isThereAnError = !!(state.emailError || state.passwordError);
+
   return (
     <div className={Styles.login}>
       <Header />
@@ -39,7 +41,7 @@ const Login: React.FC<Props> = ({ validation }) => {
 
           <BaseInput type='password' name='password' placeholder='Digite sua senha' />
 
-          <button data-testid='submit' disabled type='submit'>
+          <button data-testid='submit' disabled={isThereAnError} type='submit'>
             Entrar
           </button>
 
