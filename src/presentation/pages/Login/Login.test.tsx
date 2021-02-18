@@ -1,4 +1,6 @@
 import React from 'react';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import faker from 'faker';
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import 'jest-localstorage-mock';
@@ -16,13 +18,18 @@ type SutParams = {
   validationError: string;
 };
 
+const history = createMemoryHistory();
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub();
   validationStub.errorMessage = params?.validationError;
 
   const authenticationSpy = new AuthenticationSpy();
 
-  const sut = render(<Login validation={validationStub} authentication={authenticationSpy} />);
+  const sut = render(
+    <Router history={history}>
+      <Login validation={validationStub} authentication={authenticationSpy} />
+    </Router>
+  );
 
   return {
     sut,
@@ -65,7 +72,7 @@ const verifyInputStatus = ({ sut, fieldName, validationError }: VerifyInputStatu
 };
 
 describe('Login Component', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(localStorage.clear);
   afterEach(cleanup);
 
   it('should not render Spinner and error on start', () => {
@@ -203,5 +210,13 @@ describe('Login Component', () => {
       'accessToken',
       authenticationSpy.account.accessToken
     );
+  });
+
+  it('should navigate to signup page', () => {
+    const { sut } = makeSut();
+    const signUpLink = sut.getByTestId('signup-link');
+    fireEvent.click(signUpLink);
+    expect(history.length).toBe(2);
+    expect(history.location.pathname).toBe('/signup');
   });
 });
