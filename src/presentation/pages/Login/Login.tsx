@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import Styles from './Login.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
 import { FormContextState } from '@/presentation/contexts/form/form.context';
 import { Authentication } from '@/domain/usecases';
-import { Link } from 'react-router-dom';
 
 type Props = {
   validation: Validation;
@@ -13,6 +13,7 @@ type Props = {
 };
 
 const Login: React.FC<Props> = ({ validation, authentication }) => {
+  const history = useHistory();
   const [state, setState] = useState<FormContextState>({
     isLoading: false,
     email: '',
@@ -48,6 +49,7 @@ const Login: React.FC<Props> = ({ validation, authentication }) => {
       .auth({ email: state.email, password: state.password })
       .then((account) => {
         localStorage.setItem('accessToken', account.accessToken);
+        history.replace('/');
       })
       .catch((error) => {
         setState({
