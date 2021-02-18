@@ -71,6 +71,21 @@ const verifyInputStatus = ({ sut, fieldName, validationError }: VerifyInputStatu
   expect(inputStatus.textContent).toBe(validationError ? '🔴' : '🟢');
 };
 
+type VerifyIfButtonIsDisabledParams = {
+  sut: RenderResult;
+  elementTestId: string;
+  isDisabled: boolean;
+};
+
+const verifyIsButtonIsDisabled = ({
+  sut,
+  elementTestId,
+  isDisabled,
+}: VerifyIfButtonIsDisabledParams): void => {
+  const button = sut.getByTestId(elementTestId) as HTMLButtonElement;
+  expect(button.disabled).toBe(isDisabled);
+};
+
 describe('Login Component', () => {
   beforeEach(localStorage.clear);
   afterEach(cleanup);
@@ -83,8 +98,7 @@ describe('Login Component', () => {
 
   it('should disable the submit button on Login start because fields are not valid yet', () => {
     const { sut } = makeSut({ validationError: faker.random.words() });
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
-    expect(submitButton.disabled).toBe(true);
+    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 
   it('should start with empty email and password inputs', () => {
@@ -142,19 +156,17 @@ describe('Login Component', () => {
     fillEmailField(sut);
     fillPasswordField(sut);
 
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
-    expect(submitButton.disabled).toBe(false);
+    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 
   it('should show the loading spinner and disable the submit button on form submit', () => {
     const { sut } = makeSut();
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
 
     simulateValidSubmit(sut);
 
     const loadingSpinner = sut.getByTestId('loading-spinner');
     expect(loadingSpinner).toBeTruthy();
-    expect(submitButton.disabled).toBe(true);
+    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 
   it('should call Authentication with correct values', () => {
