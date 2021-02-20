@@ -23,4 +23,10 @@ describe('EmailValidation', () => {
     const error = sut.validate('any_email');
     expect(error).toEqual(new InvalidFieldError());
   });
+
+  it('should return falsy if email is valid', () => {
+    const sut = new EmailValidation('email');
+    const valdationError = sut.validate(faker.internet.email());
+    expect(valdationError).toBeFalsy();
+  });
 });
