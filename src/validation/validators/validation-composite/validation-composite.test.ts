@@ -30,4 +30,11 @@ describe('ValidationComposite', () => {
 
     expect(validationError).toBe('first_error_message');
   });
+
+  it('should return falsy if all validation succeeds', () => {
+    const { sut } = makeSut();
+    const validationError = sut.validate('any_field', 'any_value');
+
+    expect(validationError).toBeFalsy();
+  });
 });
