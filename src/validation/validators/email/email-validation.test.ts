@@ -9,8 +9,8 @@ describe('EmailValidation', () => {
   it('should return an error if email is invalid', () => {
     const sut = makeSut();
     const validationError = sut.validate(faker.random.word());
-    expect(validationError).toEqual(new InvalidFieldError(fieldName));
-    expect(validationError.message).toBe(`Campo ${fieldName} está com valor inválido`);
+    expect(validationError).toEqual(new InvalidFieldError());
+    expect(validationError.message).toBe('Valor inválido');
   });
 
   it('should return falsy if email is valid', () => {

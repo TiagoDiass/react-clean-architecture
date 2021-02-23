@@ -10,7 +10,7 @@ describe('MinLenghtValidation', () => {
   it('should return an error if value doesnt have the min length', () => {
     const sut = makeSut();
     const validationError = sut.validate(faker.random.alphaNumeric(4));
-    expect(validationError).toEqual(new InvalidFieldError(fieldName));
+    expect(validationError).toEqual(new InvalidFieldError());
   });
 
   it('should return falsy if value has the min length', () => {
