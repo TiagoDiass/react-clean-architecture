@@ -1,1 +1,1 @@
-# React with Clean Architecture and TDD [under development]
+# React with Clean Architecture and TDD [under development] [![Build Status](https://travis-ci.com/TiagoDiass/react-clean-architecture.svg?branch=master)](https://travis-ci.com/TiagoDiass/react-clean-architecture)
