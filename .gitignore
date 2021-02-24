@@ -3,3 +3,4 @@ build
 coverage
 public/js
 public/images
+.env
