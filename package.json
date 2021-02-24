@@ -1,6 +1,6 @@
 {
   "name": "react-clean",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react with clean architecture and tdd",
   "main": "index.js",
   "repository": "https://github.com/TiagoDiass/react-clean.git",
