@@ -229,6 +229,26 @@ describe('Login Component', () => {
     expect(history.location.pathname).toBe('/');
   });
 
+  it('should present an error if SaveAccessToken fails', async () => {
+    const { sut, saveAccessTokenMock } = makeSut();
+
+    const error = new InvalidCredentialsError();
+
+    jest.spyOn(saveAccessTokenMock, 'save').mockReturnValueOnce(Promise.reject(error));
+
+    simulateValidSubmit(sut);
+
+    const errorWrapper = sut.getByTestId('error-wrapper');
+
+    await waitFor(() => errorWrapper);
+
+    const mainError = sut.getByTestId('main-error');
+    expect(mainError.textContent).toBe(error.message);
+
+    // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
+    expect(errorWrapper.childElementCount).toBe(1);
+  });
+
   it('should navigate to signup page', () => {
     const { sut } = makeSut();
     const signUpLink = sut.getByTestId('signup-link');
