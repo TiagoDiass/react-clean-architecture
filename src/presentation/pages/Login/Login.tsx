@@ -5,14 +5,15 @@ import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presenta
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
 import { FormContextState } from '@/presentation/contexts/form/form.context';
-import { Authentication } from '@/domain/usecases';
+import { Authentication, SaveAccessToken } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
   authentication: Authentication;
+  saveAccessToken: SaveAccessToken;
 };
 
-const Login: React.FC<Props> = ({ validation, authentication }) => {
+const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken }) => {
   const history = useHistory();
   const [state, setState] = useState<FormContextState>({
     isLoading: false,
@@ -47,8 +48,8 @@ const Login: React.FC<Props> = ({ validation, authentication }) => {
 
     await authentication
       .auth({ email: state.email, password: state.password })
-      .then((account) => {
-        localStorage.setItem('accessToken', account.accessToken);
+      .then(async (account) => {
+        await saveAccessToken.save(account.accessToken);
         history.replace('/');
       })
       .catch((error) => {

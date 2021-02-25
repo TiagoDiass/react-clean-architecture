@@ -3,15 +3,15 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import faker from 'faker';
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
-import 'jest-localstorage-mock';
 
 import Login from './Login';
-import { AuthenticationSpy, ValidationStub } from '@/presentation/test';
+import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub } from '@/presentation/test';
 import { InvalidCredentialsError } from '@/domain/errors';
 
 type SutTypes = {
   sut: RenderResult;
   authenticationSpy: AuthenticationSpy;
+  saveAccessTokenMock: SaveAccessTokenMock;
 };
 
 type SutParams = {
@@ -25,15 +25,22 @@ const makeSut = (params?: SutParams): SutTypes => {
 
   const authenticationSpy = new AuthenticationSpy();
 
+  const saveAccessTokenMock = new SaveAccessTokenMock();
+
   const sut = render(
     <Router history={history}>
-      <Login validation={validationStub} authentication={authenticationSpy} />
+      <Login
+        validation={validationStub}
+        authentication={authenticationSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
     </Router>
   );
 
   return {
     sut,
     authenticationSpy,
+    saveAccessTokenMock,
   };
 };
 
@@ -87,7 +94,6 @@ const verifyIsButtonIsDisabled = ({
 };
 
 describe('Login Component', () => {
-  beforeEach(localStorage.clear);
   afterEach(cleanup);
 
   it('should not render Spinner and error on start', () => {
@@ -212,16 +218,13 @@ describe('Login Component', () => {
     expect(errorWrapper.childElementCount).toBe(1);
   });
 
-  it('should add accessToken on localStorage and navigate to root route if Authentication succeeds', async () => {
-    const { sut, authenticationSpy } = makeSut();
+  it('should call SaveAccessToken if Authentication succeeds', async () => {
+    const { sut, authenticationSpy, saveAccessTokenMock } = makeSut();
     simulateValidSubmit(sut);
 
     await waitFor(() => sut.getByTestId('form'));
 
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'accessToken',
-      authenticationSpy.account.accessToken
-    );
+    expect(saveAccessTokenMock.accessToken).toBe(authenticationSpy.account.accessToken);
     expect(history.length).toBe(1);
     expect(history.location.pathname).toBe('/');
   });
