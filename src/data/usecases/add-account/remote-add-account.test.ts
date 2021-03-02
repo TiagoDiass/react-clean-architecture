@@ -21,12 +21,21 @@ const makeSut = (url: string = faker.internet.url()): SutTypes => {
 };
 
 describe('AddAccount', () => {
-  test('should call HttpPostClient with the correct URL', async () => {
+  it('should call HttpPostClient with the correct URL', async () => {
     const url = faker.internet.url();
 
     const { sut, httpPostClientSpy } = makeSut(url);
 
     await sut.add(mockAddAccountParams());
     expect(httpPostClientSpy.url).toBe(url);
+  });
+
+  it('should call HttpPostClient with the correct body', async () => {
+    const { sut, httpPostClientSpy } = makeSut();
+
+    const addAccountParams = mockAddAccountParams();
+
+    await sut.add(addAccountParams);
+    expect(httpPostClientSpy.body).toEqual(addAccountParams);
   });
 });
