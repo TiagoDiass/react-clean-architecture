@@ -64,4 +64,16 @@ describe('AddAccount', () => {
 
     await expect(promise).rejects.toThrow(new UnexpectedError());
   });
+
+  it('should throws UnexpectedError if HttpPostClient returns a 500 status', async () => {
+    const { sut, httpPostClientSpy } = makeSut();
+
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.serverError,
+    };
+
+    const promise = sut.add(mockAddAccountParams());
+
+    await expect(promise).rejects.toThrow(new UnexpectedError());
+  });
 });
