@@ -6,12 +6,13 @@ type Props = {
 };
 
 // Pages
-import { Login } from '@/presentation/pages';
+import { SignUp } from '@/presentation/pages';
 
 const Router: React.FC<Props> = ({ makeLogin }) => {
   return (
     <BrowserRouter>
       <Switch>
+        <Route path='/signup' exact component={SignUp} />
         <Route path='/login' exact component={makeLogin} />
       </Switch>
     </BrowserRouter>
