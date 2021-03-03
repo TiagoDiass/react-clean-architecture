@@ -4,7 +4,6 @@ import Styles from './Login.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
-import { FormContextState } from '@/presentation/contexts/form/form.context';
 import { Authentication, SaveAccessToken } from '@/domain/usecases';
 
 type Props = {
@@ -15,7 +14,7 @@ type Props = {
 
 const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken }) => {
   const history = useHistory();
-  const [state, setState] = useState<FormContextState>({
+  const [state, setState] = useState({
     isLoading: false,
     email: '',
     password: '',
