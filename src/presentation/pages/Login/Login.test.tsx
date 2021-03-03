@@ -5,8 +5,18 @@ import faker from 'faker';
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
 
 import Login from './Login';
-import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub } from '@/presentation/test';
+
 import { InvalidCredentialsError } from '@/domain/errors';
+
+import {
+  AuthenticationSpy,
+  SaveAccessTokenMock,
+  ValidationStub,
+  Helper,
+} from '@/presentation/test';
+
+// Helpers
+const { verifyElementChildCount, verifyIsButtonIsDisabled, verifyInputStatus } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -66,38 +76,12 @@ const fillPasswordField = (sut: RenderResult, password = faker.internet.password
   fireEvent.input(passwordInput, { target: { value: password } });
 };
 
-type VerifyInputStatusParams = {
-  sut: RenderResult;
-  fieldName: string;
-  validationError?: string;
-};
-
-const verifyInputStatus = ({ sut, fieldName, validationError }: VerifyInputStatusParams): void => {
-  const inputStatus = sut.getByTestId(`${fieldName}-status`);
-  expect(inputStatus.title).toBe(validationError || 'Tudo certo!');
-  expect(inputStatus.textContent).toBe(validationError ? '🔴' : '🟢');
-};
-
-type VerifyIfButtonIsDisabledParams = {
-  sut: RenderResult;
-  elementTestId: string;
-  isDisabled: boolean;
-};
-
-const verifyIsButtonIsDisabled = ({
-  sut,
-  elementTestId,
-  isDisabled,
-}: VerifyIfButtonIsDisabledParams): void => {
-  const button = sut.getByTestId(elementTestId) as HTMLButtonElement;
-  expect(button.disabled).toBe(isDisabled);
-};
-
 describe('Login Component', () => {
   afterEach(cleanup);
 
   it('should not render Spinner and error on start', () => {
     const { sut } = makeSut();
+    verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
     const errorWrapper = sut.getByTestId('error-wrapper');
     expect(errorWrapper.childElementCount).toBe(0);
   });
