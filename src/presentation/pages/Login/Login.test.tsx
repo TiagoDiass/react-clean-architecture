@@ -79,16 +79,13 @@ const fillPasswordField = (sut: RenderResult, password = faker.internet.password
 describe('Login Component', () => {
   afterEach(cleanup);
 
-  it('should not render Spinner and error on start', () => {
-    const { sut } = makeSut();
+  it('should start with initial state', () => {
+    const validationError = faker.random.words();
+    const { sut } = makeSut({ validationError });
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
-    const errorWrapper = sut.getByTestId('error-wrapper');
-    expect(errorWrapper.childElementCount).toBe(0);
-  });
-
-  it('should disable the submit button on Login start because fields are not valid yet', () => {
-    const { sut } = makeSut({ validationError: faker.random.words() });
     verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyInputStatus({ sut, fieldName: 'email', validationError });
+    verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
 
   it('should start with empty email and password inputs', () => {
@@ -98,14 +95,6 @@ describe('Login Component', () => {
 
     expect(emailInput.value).toBe('');
     expect(passwordInput.value).toBe('');
-  });
-
-  it('should start email and passoword inputs with an "invalid" state', () => {
-    const validationError = faker.random.words();
-    const { sut } = makeSut({ validationError });
-
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
 
   it('should show an email error if validation fails', () => {
