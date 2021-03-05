@@ -1,12 +1,12 @@
 import React from 'react';
 import faker from 'faker';
-import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
+import { cleanup, render, RenderResult } from '@testing-library/react';
 
 import SignUp from './SignUp';
 import { Helper, ValidationStub } from '@/presentation/test';
 
 // Helpers
-const { verifyElementChildCount, verifyInputStatus, verifyIsButtonIsDisabled } = Helper;
+const { verifyElementChildCount, verifyInputStatus, verifyIsButtonIsDisabled, fillField } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -25,17 +25,6 @@ const makeSut = (params?: SutParams): SutTypes => {
   return {
     sut,
   };
-};
-
-type FillField = {
-  sut: RenderResult;
-  fieldName: string;
-  value?: string;
-};
-
-const fillField = ({ sut, fieldName, value = faker.random.word() }: FillField): void => {
-  const inputElement = sut.getByTestId(`${fieldName}-input`);
-  fireEvent.input(inputElement, { target: { value } });
 };
 
 describe('SignUp View', () => {

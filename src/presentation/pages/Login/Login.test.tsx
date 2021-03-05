@@ -16,7 +16,7 @@ import {
 } from '@/presentation/test';
 
 // Helpers
-const { verifyElementChildCount, verifyIsButtonIsDisabled, verifyInputStatus } = Helper;
+const { verifyElementChildCount, verifyIsButtonIsDisabled, verifyInputStatus, fillField } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -59,21 +59,11 @@ const simulateValidSubmit = (
   email = faker.internet.email(),
   password = faker.internet.password()
 ): void => {
-  fillEmailField(sut, email);
-  fillPasswordField(sut, password);
+  fillField({ sut, fieldName: 'email', value: email });
+  fillField({ sut, fieldName: 'password', value: password });
 
   const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
   fireEvent.click(submitButton);
-};
-
-const fillEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
-  const emailInput = sut.getByTestId('email-input');
-  fireEvent.input(emailInput, { target: { value: email } });
-};
-
-const fillPasswordField = (sut: RenderResult, password = faker.internet.password()): void => {
-  const passwordInput = sut.getByTestId('password-input');
-  fireEvent.input(passwordInput, { target: { value: password } });
 };
 
 describe('Login Component', () => {
@@ -101,7 +91,7 @@ describe('Login Component', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
 
-    fillEmailField(sut);
+    fillField({ sut, fieldName: 'email' });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
   });
 
@@ -109,7 +99,7 @@ describe('Login Component', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
 
-    fillPasswordField(sut);
+    fillField({ sut, fieldName: 'password' });
 
     verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
@@ -117,23 +107,23 @@ describe('Login Component', () => {
   it('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut();
 
-    fillEmailField(sut);
-
+    fillField({ sut, fieldName: 'email' });
     verifyInputStatus({ sut, fieldName: 'email' });
   });
 
   it('should show valid password state if validation succeeds', () => {
     const { sut } = makeSut();
 
-    fillPasswordField(sut);
+    fillField({ sut, fieldName: 'password' });
 
     verifyInputStatus({ sut, fieldName: 'password' });
   });
 
   it('should enable the submit button if form state is valid', () => {
     const { sut } = makeSut();
-    fillEmailField(sut);
-    fillPasswordField(sut);
+
+    fillField({ sut, fieldName: 'email' });
+    fillField({ sut, fieldName: 'password' });
 
     verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
@@ -166,7 +156,7 @@ describe('Login Component', () => {
     const validationError = faker.random.words();
     const { sut, authenticationSpy } = makeSut({ validationError });
 
-    fillEmailField(sut);
+    fillField({ sut, fieldName: 'email' });
     fireEvent.submit(sut.getByTestId('form'));
     expect(authenticationSpy.callsCount).toBe(0);
   });

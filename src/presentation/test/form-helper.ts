@@ -1,4 +1,5 @@
-import { RenderResult } from '@testing-library/react';
+import { fireEvent, RenderResult } from '@testing-library/react';
+import faker from 'faker';
 
 type VerifyElementChildCountParams = {
   sut: RenderResult;
@@ -6,6 +7,9 @@ type VerifyElementChildCountParams = {
   expectedCount: number;
 };
 
+/**
+ * @helper Verifica se o número de filhos de um elemento é o esperado
+ */
 export const verifyElementChildCount = ({
   sut,
   elementTestId,
@@ -21,6 +25,9 @@ type VerifyInputStatusParams = {
   validationError?: string;
 };
 
+/**
+ * @helper Verifica o status de um input
+ */
 export const verifyInputStatus = ({
   sut,
   fieldName,
@@ -37,6 +44,9 @@ type VerifyIfButtonIsDisabledParams = {
   isDisabled: boolean;
 };
 
+/**
+ * @helper Verifica se um botão está desabilitado
+ */
 export const verifyIsButtonIsDisabled = ({
   sut,
   elementTestId,
@@ -44,4 +54,22 @@ export const verifyIsButtonIsDisabled = ({
 }: VerifyIfButtonIsDisabledParams): void => {
   const button = sut.getByTestId(elementTestId) as HTMLButtonElement;
   expect(button.disabled).toBe(isDisabled);
+};
+
+type FillFieldParams = {
+  sut: RenderResult;
+  fieldName: string;
+  value?: string;
+};
+
+/**
+ * @helper Preenche um input
+ */
+export const fillField = ({
+  sut,
+  fieldName,
+  value = faker.random.word(),
+}: FillFieldParams): void => {
+  const inputElement = sut.getByTestId(`${fieldName}-input`);
+  fireEvent.input(inputElement, { target: { value } });
 };
