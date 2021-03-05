@@ -42,7 +42,7 @@ describe('SignUp View', () => {
     verifyInputStatus({
       sut,
       fieldName: 'passwordConfirmation',
-      validationError: 'Campo obrigatório',
+      validationError,
     });
   });
 
@@ -68,5 +68,13 @@ describe('SignUp View', () => {
 
     fillField({ sut, fieldName: 'password' });
     verifyInputStatus({ sut, fieldName: 'password', validationError });
+  });
+
+  it('should show a password confirmation error if Validation fails', () => {
+    const validationError = faker.random.words();
+    const { sut } = makeSut({ validationError });
+
+    fillField({ sut, fieldName: 'passwordConfirmation' });
+    verifyInputStatus({ sut, fieldName: 'passwordConfirmation', validationError });
   });
 });
