@@ -38,7 +38,7 @@ describe('SignUp View', () => {
 
     verifyInputStatus({ sut, fieldName: 'name', validationError });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
-    verifyInputStatus({ sut, fieldName: 'password', validationError: 'Campo obrigatório' });
+    verifyInputStatus({ sut, fieldName: 'password', validationError });
     verifyInputStatus({
       sut,
       fieldName: 'passwordConfirmation',
@@ -60,5 +60,13 @@ describe('SignUp View', () => {
 
     fillField({ sut, fieldName: 'email' });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
+  });
+
+  it('should show a password error if Validation fails', () => {
+    const validationError = faker.random.words();
+    const { sut } = makeSut({ validationError });
+
+    fillField({ sut, fieldName: 'password' });
+    verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
 });
