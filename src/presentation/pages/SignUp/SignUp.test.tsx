@@ -37,7 +37,7 @@ describe('SignUp View', () => {
     verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
 
     verifyInputStatus({ sut, fieldName: 'name', validationError });
-    verifyInputStatus({ sut, fieldName: 'email', validationError: 'Campo obrigatório' });
+    verifyInputStatus({ sut, fieldName: 'email', validationError });
     verifyInputStatus({ sut, fieldName: 'password', validationError: 'Campo obrigatório' });
     verifyInputStatus({
       sut,
@@ -46,12 +46,19 @@ describe('SignUp View', () => {
     });
   });
 
-  it('should show a name error if validation fails', () => {
+  it('should show a name error if Validation fails', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
 
-    const fieldName = 'name';
-    fillField({ sut, fieldName });
-    verifyInputStatus({ sut, fieldName, validationError });
+    fillField({ sut, fieldName: 'name' });
+    verifyInputStatus({ sut, fieldName: 'name', validationError });
+  });
+
+  it('should show an email error if Validation fails', () => {
+    const validationError = faker.random.words();
+    const { sut } = makeSut({ validationError });
+
+    fillField({ sut, fieldName: 'email' });
+    verifyInputStatus({ sut, fieldName: 'email', validationError });
   });
 });
