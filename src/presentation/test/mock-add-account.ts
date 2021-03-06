@@ -3,9 +3,11 @@ import { AddAccount, AddAccountParams } from '@/domain/usecases';
 
 export class AddAccountSpy implements AddAccount {
   params: AddAccountParams;
+  callsCount = 0;
 
   add(params: AddAccountParams): Promise<AccountModel> {
     this.params = params;
+    this.callsCount++;
     return null;
   }
 }
