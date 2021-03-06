@@ -77,4 +77,32 @@ describe('SignUp View', () => {
     fillField({ sut, fieldName: 'passwordConfirmation' });
     verifyInputStatus({ sut, fieldName: 'passwordConfirmation', validationError });
   });
+
+  it('should show valid name state if Validation succeeds', () => {
+    const { sut } = makeSut();
+
+    fillField({ sut, fieldName: 'name' });
+    verifyInputStatus({ sut, fieldName: 'name' });
+  });
+
+  it('should show valid email state if Validation succeeds', () => {
+    const { sut } = makeSut();
+
+    fillField({ sut, fieldName: 'email' });
+    verifyInputStatus({ sut, fieldName: 'email' });
+  });
+
+  it('should show valid password state if Validation succeeds', () => {
+    const { sut } = makeSut();
+
+    fillField({ sut, fieldName: 'password' });
+    verifyInputStatus({ sut, fieldName: 'password' });
+  });
+
+  it('should show valid passwordConfirmation state if Validation succeeds', () => {
+    const { sut } = makeSut();
+
+    fillField({ sut, fieldName: 'passwordConfirmation' });
+    verifyInputStatus({ sut, fieldName: 'passwordConfirmation' });
+  });
 });
