@@ -5,6 +5,7 @@ import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-libr
 import SignUp from './SignUp';
 import { AddAccountSpy, Helper, ValidationStub } from '@/presentation/test';
 import { AddAccountParams } from '@/domain/usecases';
+import { EmailInUseError } from '@/domain/errors';
 
 type SutTypes = {
   sut: RenderResult;
@@ -59,6 +60,17 @@ const simulateValidSubmit = async ({
   const form = sut.getByTestId('form');
   fireEvent.submit(form);
   await waitFor(() => form);
+};
+
+type VerifyElementTextParams = {
+  sut: RenderResult;
+  elementTestId: string;
+  text: string;
+};
+
+const verifyElementText = ({ sut, elementTestId, text }: VerifyElementTextParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element.textContent).toBe(text);
 };
 
 describe('SignUp View', () => {
@@ -190,5 +202,20 @@ describe('SignUp View', () => {
     await simulateValidSubmit({ sut });
 
     expect(addAccountSpy.callsCount).toBe(0);
+  });
+
+  it('should present an error message and hide spinner if AddAccount fails', async () => {
+    const { sut, addAccountSpy } = makeSut();
+
+    const error = new EmailInUseError();
+
+    jest.spyOn(addAccountSpy, 'add').mockRejectedValueOnce(error);
+
+    await simulateValidSubmit({ sut });
+
+    verifyElementText({ sut, elementTestId: 'main-error', text: error.message });
+
+    // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
+    verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 1 });
   });
 });

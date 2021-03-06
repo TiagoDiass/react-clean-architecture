@@ -60,6 +60,17 @@ const makeSut = (params?: SutParams): SutTypes => {
   };
 };
 
+type VerifyElementTextParams = {
+  sut: RenderResult;
+  elementTestId: string;
+  text: string;
+};
+
+const verifyElementText = ({ sut, elementTestId, text }: VerifyElementTextParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element.textContent).toBe(text);
+};
+
 const simulateValidSubmit = (
   sut: RenderResult,
   email = faker.internet.email(),
@@ -179,7 +190,7 @@ describe('Login Component', () => {
 
     const error = new InvalidCredentialsError();
 
-    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error));
+    jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error);
 
     simulateValidSubmit(sut);
 
@@ -187,11 +198,10 @@ describe('Login Component', () => {
 
     await waitFor(() => errorWrapper);
 
-    const mainError = sut.getByTestId('main-error');
-    expect(mainError.textContent).toBe(error.message);
+    verifyElementText({ sut, elementTestId: 'main-error', text: error.message });
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
-    expect(errorWrapper.childElementCount).toBe(1);
+    verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 1 });
   });
 
   it('should call SaveAccessToken if Authentication succeeds', async () => {
