@@ -25,7 +25,13 @@ const makeSut = (params?: SutParams): SutTypes => {
 };
 
 // Helpers
-const { verifyElementChildCount, verifyInputStatus, verifyIfButtonIsDisabled, fillField } = Helper;
+const {
+  verifyElementChildCount,
+  verifyInputStatus,
+  verifyIfButtonIsDisabled,
+  fillField,
+  verifyIfElementExists,
+} = Helper;
 
 type SimulateValidSubmitParams = {
   sut: RenderResult;
@@ -49,16 +55,6 @@ const simulateValidSubmit = async ({
   const form = sut.getByTestId('form');
   fireEvent.submit(form);
   await waitFor(() => form);
-};
-
-type VerifyIfElementExistsParams = {
-  sut: RenderResult;
-  elementTestId: string;
-};
-
-const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExistsParams) => {
-  const element = sut.getByTestId(elementTestId);
-  expect(element).toBeTruthy();
 };
 
 describe('SignUp View', () => {

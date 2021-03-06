@@ -73,3 +73,16 @@ export const fillField = ({
   const inputElement = sut.getByTestId(`${fieldName}-input`);
   fireEvent.input(inputElement, { target: { value } });
 };
+
+type VerifyIfElementExistsParams = {
+  sut: RenderResult;
+  elementTestId: string;
+};
+
+/**
+ * @helper Verifica se um elemento existe
+ */
+export const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExistsParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element).toBeTruthy();
+};

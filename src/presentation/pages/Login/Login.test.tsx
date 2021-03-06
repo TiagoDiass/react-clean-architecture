@@ -16,7 +16,13 @@ import {
 } from '@/presentation/test';
 
 // Helpers
-const { verifyElementChildCount, verifyIfButtonIsDisabled, verifyInputStatus, fillField } = Helper;
+const {
+  verifyElementChildCount,
+  verifyIfButtonIsDisabled,
+  verifyInputStatus,
+  fillField,
+  verifyIfElementExists,
+} = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -64,16 +70,6 @@ const simulateValidSubmit = (
 
   const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
   fireEvent.click(submitButton);
-};
-
-type VerifyIfElementExistsParams = {
-  sut: RenderResult;
-  elementTestId: string;
-};
-
-const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExistsParams) => {
-  const element = sut.getByTestId(elementTestId);
-  expect(element).toBeTruthy();
 };
 
 describe('Login Component', () => {
