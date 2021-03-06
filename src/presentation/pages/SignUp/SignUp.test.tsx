@@ -1,32 +1,46 @@
 import React from 'react';
 import faker from 'faker';
 import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
 import SignUp from './SignUp';
-import { AddAccountSpy, Helper, ValidationStub } from '@/presentation/test';
+import { AddAccountSpy, Helper, SaveAccessTokenMock, ValidationStub } from '@/presentation/test';
 import { AddAccountParams } from '@/domain/usecases';
 import { EmailInUseError } from '@/domain/errors';
 
 type SutTypes = {
   sut: RenderResult;
   addAccountSpy: AddAccountSpy;
+  saveAccessTokenMock: SaveAccessTokenMock;
 };
 
 type SutParams = {
   validationError: string;
 };
 
+const history = createMemoryHistory({ initialEntries: ['/signup'] });
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub();
   validationStub.errorMessage = params?.validationError;
 
+  const saveAccessTokenMock = new SaveAccessTokenMock();
   const addAccountSpy = new AddAccountSpy();
 
-  const sut = render(<SignUp validation={validationStub} addAccount={addAccountSpy} />);
+  const sut = render(
+    <Router history={history}>
+      <SignUp
+        validation={validationStub}
+        addAccount={addAccountSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
+    </Router>
+  );
 
   return {
     sut,
     addAccountSpy,
+    saveAccessTokenMock,
   };
 };
 
@@ -152,7 +166,7 @@ describe('SignUp View', () => {
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 
-  it('should show spinner on and disable the submit button on form submit', async () => {
+  it('should show spinner and disable the submit button on form submit', async () => {
     const { sut } = makeSut();
 
     await simulateValidSubmit({ sut });
@@ -207,5 +221,16 @@ describe('SignUp View', () => {
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 1 });
+  });
+
+  it('should call SaveAccessToken if AddAccount succeeds', async () => {
+    const { sut, addAccountSpy, saveAccessTokenMock } = makeSut();
+
+    await simulateValidSubmit({ sut });
+    await waitFor(() => sut.getByTestId('form'));
+
+    expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken);
+    expect(history.length).toBe(1);
+    expect(history.location.pathname).toBe('/');
   });
 });
