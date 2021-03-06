@@ -22,6 +22,7 @@ const {
   verifyInputStatus,
   fillField,
   verifyIfElementExists,
+  verifyElementText,
 } = Helper;
 
 type SutTypes = {
@@ -58,17 +59,6 @@ const makeSut = (params?: SutParams): SutTypes => {
     authenticationSpy,
     saveAccessTokenMock,
   };
-};
-
-type VerifyElementTextParams = {
-  sut: RenderResult;
-  elementTestId: string;
-  text: string;
-};
-
-const verifyElementText = ({ sut, elementTestId, text }: VerifyElementTextParams) => {
-  const element = sut.getByTestId(elementTestId);
-  expect(element.textContent).toBe(text);
 };
 
 const simulateValidSubmit = (

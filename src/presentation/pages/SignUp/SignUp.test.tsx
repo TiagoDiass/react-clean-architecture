@@ -37,6 +37,7 @@ const {
   verifyIfButtonIsDisabled,
   fillField,
   verifyIfElementExists,
+  verifyElementText,
 } = Helper;
 
 type SimulateValidSubmitParams = {
@@ -60,17 +61,6 @@ const simulateValidSubmit = async ({
   const form = sut.getByTestId('form');
   fireEvent.submit(form);
   await waitFor(() => form);
-};
-
-type VerifyElementTextParams = {
-  sut: RenderResult;
-  elementTestId: string;
-  text: string;
-};
-
-const verifyElementText = ({ sut, elementTestId, text }: VerifyElementTextParams) => {
-  const element = sut.getByTestId(elementTestId);
-  expect(element.textContent).toBe(text);
 };
 
 describe('SignUp View', () => {

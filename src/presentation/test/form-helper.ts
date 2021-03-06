@@ -86,3 +86,17 @@ export const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExi
   const element = sut.getByTestId(elementTestId);
   expect(element).toBeTruthy();
 };
+
+type VerifyElementTextParams = {
+  sut: RenderResult;
+  elementTestId: string;
+  text: string;
+};
+
+/**
+ * @helper Verifica o texto interno de um elemento
+ */
+export const verifyElementText = ({ sut, elementTestId, text }: VerifyElementTextParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element.textContent).toBe(text);
+};
