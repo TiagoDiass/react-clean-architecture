@@ -4,9 +4,12 @@ import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-libr
 
 import SignUp from './SignUp';
 import { Helper, ValidationStub } from '@/presentation/test';
+import { AddAccount, AddAccountParams } from '@/domain/usecases';
+import { AccountModel } from '@/domain/models';
 
 type SutTypes = {
   sut: RenderResult;
+  addAccountSpy: AddAccountSpy;
 };
 
 type SutParams = {
@@ -17,12 +20,24 @@ const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub();
   validationStub.errorMessage = params?.validationError;
 
-  const sut = render(<SignUp validation={validationStub} />);
+  const addAccountSpy = new AddAccountSpy();
+
+  const sut = render(<SignUp validation={validationStub} addAccount={addAccountSpy} />);
 
   return {
     sut,
+    addAccountSpy,
   };
 };
+
+class AddAccountSpy implements AddAccount {
+  params: AddAccountParams;
+
+  add(params: AddAccountParams): Promise<AccountModel> {
+    this.params = params;
+    return null;
+  }
+}
 
 // Helpers
 const {
@@ -38,7 +53,6 @@ type SimulateValidSubmitParams = {
   name?: string;
   email?: string;
   password?: string;
-  passwordConfirmation?: string;
 };
 
 const simulateValidSubmit = async ({
@@ -152,5 +166,22 @@ describe('SignUp View', () => {
     await simulateValidSubmit({ sut });
     verifyIfElementExists({ sut, elementTestId: 'loading-spinner' });
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+  });
+
+  it('should call AddAccount with correct values', async () => {
+    const { sut, addAccountSpy } = makeSut();
+
+    const password = faker.internet.password();
+
+    const params: AddAccountParams = {
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: password,
+      passwordConfirmation: password,
+    };
+
+    await simulateValidSubmit({ sut, ...params });
+
+    expect(addAccountSpy.params).toEqual(params);
   });
 });

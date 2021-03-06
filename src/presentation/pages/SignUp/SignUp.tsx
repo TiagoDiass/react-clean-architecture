@@ -3,12 +3,14 @@ import Styles from './SignUp.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
+import { AddAccount } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
+  addAccount: AddAccount;
 };
 
-const SignUp: React.FC<Props> = ({ validation }) => {
+const SignUp: React.FC<Props> = ({ validation, addAccount }) => {
   const [state, setState] = useState({
     isLoading: false,
 
@@ -48,11 +50,18 @@ const SignUp: React.FC<Props> = ({ validation }) => {
     state.passwordConfirmationError
   );
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setState({
       ...state,
       isLoading: true,
+    });
+
+    await addAccount.add({
+      name: state.name,
+      email: state.email,
+      password: state.password,
+      passwordConfirmation: state.passwordConfirmation,
     });
   };
 
