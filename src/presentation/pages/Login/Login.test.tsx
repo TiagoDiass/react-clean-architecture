@@ -156,13 +156,21 @@ describe('Login Component', () => {
     });
   });
 
+  it('should call Authentication only once', async () => {
+    const { sut, authenticationSpy } = makeSut();
+
+    await simulateValidSubmit(sut);
+    await simulateValidSubmit(sut);
+
+    expect(authenticationSpy.callsCount).toBe(1);
+  });
+
   // Teste pra previnir que o form tenha um submit de uma forma manual, como no console do browser
-  it('should prevent the submit of the form if there is an error', () => {
+  it('should not call Authentication if form is invalid', async () => {
     const validationError = faker.random.words();
     const { sut, authenticationSpy } = makeSut({ validationError });
 
-    fillField({ sut, fieldName: 'email' });
-    fireEvent.submit(sut.getByTestId('form'));
+    await simulateValidSubmit(sut);
     expect(authenticationSpy.callsCount).toBe(0);
   });
 
