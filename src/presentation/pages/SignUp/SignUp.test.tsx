@@ -146,10 +146,11 @@ describe('SignUp View', () => {
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 
-  it('should show spinner on form submit', async () => {
+  it('should show spinner on and disable the submit button on form submit', async () => {
     const { sut } = makeSut();
 
     await simulateValidSubmit({ sut });
     verifyIfElementExists({ sut, elementTestId: 'loading-spinner' });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 });

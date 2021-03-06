@@ -69,7 +69,7 @@ const SignUp: React.FC<Props> = ({ validation }) => {
           <BaseInput type='password' name='password' placeholder='Digite sua senha' />
           <BaseInput type='password' name='passwordConfirmation' placeholder='Confirme sua senha' />
 
-          <button data-testid='submit' type='submit' disabled={isThereAnError}>
+          <button data-testid='submit' type='submit' disabled={isThereAnError || state.isLoading}>
             Entrar
           </button>
 
