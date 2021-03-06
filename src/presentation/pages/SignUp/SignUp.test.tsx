@@ -233,4 +233,24 @@ describe('SignUp View', () => {
     expect(history.length).toBe(1);
     expect(history.location.pathname).toBe('/');
   });
+
+  it('should present an error if SaveAccessToken fails', async () => {
+    const { sut, saveAccessTokenMock } = makeSut();
+
+    const error = new EmailInUseError();
+
+    jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error);
+
+    simulateValidSubmit({ sut });
+
+    const errorWrapper = sut.getByTestId('error-wrapper');
+
+    await waitFor(() => errorWrapper);
+
+    const mainError = sut.getByTestId('main-error');
+    expect(mainError.textContent).toBe(error.message);
+
+    // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
+    expect(errorWrapper.childElementCount).toBe(1);
+  });
 });
