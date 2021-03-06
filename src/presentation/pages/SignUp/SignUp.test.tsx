@@ -1,12 +1,9 @@
 import React from 'react';
 import faker from 'faker';
-import { cleanup, render, RenderResult } from '@testing-library/react';
+import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
 
 import SignUp from './SignUp';
 import { Helper, ValidationStub } from '@/presentation/test';
-
-// Helpers
-const { verifyElementChildCount, verifyInputStatus, verifyIfButtonIsDisabled, fillField } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -25,6 +22,43 @@ const makeSut = (params?: SutParams): SutTypes => {
   return {
     sut,
   };
+};
+
+// Helpers
+const { verifyElementChildCount, verifyInputStatus, verifyIfButtonIsDisabled, fillField } = Helper;
+
+type SimulateValidSubmitParams = {
+  sut: RenderResult;
+  name?: string;
+  email?: string;
+  password?: string;
+  passwordConfirmation?: string;
+};
+
+const simulateValidSubmit = async ({
+  sut,
+  name = faker.name.findName(),
+  email = faker.internet.email(),
+  password = faker.internet.password(),
+}: SimulateValidSubmitParams) => {
+  fillField({ sut, fieldName: 'name', value: name });
+  fillField({ sut, fieldName: 'email', value: email });
+  fillField({ sut, fieldName: 'password', value: password });
+  fillField({ sut, fieldName: 'passwordConfirmation', value: password });
+
+  const form = sut.getByTestId('form');
+  fireEvent.submit(form);
+  await waitFor(() => form);
+};
+
+type VerifyIfElementExistsParams = {
+  sut: RenderResult;
+  elementTestId: string;
+};
+
+const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExistsParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element).toBeTruthy();
 };
 
 describe('SignUp View', () => {
@@ -114,5 +148,12 @@ describe('SignUp View', () => {
     fillField({ sut, fieldName: 'password' });
     fillField({ sut, fieldName: 'passwordConfirmation' });
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
+  });
+
+  it('should show spinner on form submit', async () => {
+    const { sut } = makeSut();
+
+    await simulateValidSubmit({ sut });
+    verifyIfElementExists({ sut, elementTestId: 'loading-spinner' });
   });
 });

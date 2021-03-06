@@ -66,6 +66,16 @@ const simulateValidSubmit = (
   fireEvent.click(submitButton);
 };
 
+type VerifyIfElementExistsParams = {
+  sut: RenderResult;
+  elementTestId: string;
+};
+
+const verifyIfElementExists = ({ sut, elementTestId }: VerifyIfElementExistsParams) => {
+  const element = sut.getByTestId(elementTestId);
+  expect(element).toBeTruthy();
+};
+
 describe('Login Component', () => {
   afterEach(cleanup);
 
@@ -133,8 +143,7 @@ describe('Login Component', () => {
 
     simulateValidSubmit(sut);
 
-    const loadingSpinner = sut.getByTestId('loading-spinner');
-    expect(loadingSpinner).toBeTruthy();
+    verifyIfElementExists({ sut, elementTestId: 'loading-spinner' });
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 
