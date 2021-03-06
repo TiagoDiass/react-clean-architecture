@@ -241,7 +241,7 @@ describe('SignUp View', () => {
 
     jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error);
 
-    simulateValidSubmit({ sut });
+    await simulateValidSubmit({ sut });
 
     const errorWrapper = sut.getByTestId('error-wrapper');
 
@@ -252,5 +252,13 @@ describe('SignUp View', () => {
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
     expect(errorWrapper.childElementCount).toBe(1);
+  });
+
+  it('should navigate to Login page', () => {
+    const { sut } = makeSut();
+    const loginLink = sut.getByTestId('login-link');
+    fireEvent.click(loginLink);
+    expect(history.length).toBe(2);
+    expect(history.location.pathname).toBe('/login');
   });
 });

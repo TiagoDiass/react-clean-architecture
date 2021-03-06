@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import Styles from './SignUp.styles.scss';
 
@@ -104,7 +105,9 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
             Entrar
           </button>
 
-          <span className={Styles.link}>Já tenho um cadastro</span>
+          <Link to='/login' data-testid='login-link' className={Styles.link}>
+            Já tenho um cadastro
+          </Link>
 
           <FormStatus />
         </form>
