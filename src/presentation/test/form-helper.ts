@@ -47,7 +47,7 @@ type VerifyIfButtonIsDisabledParams = {
 /**
  * @helper Verifica se um botão está desabilitado
  */
-export const verifyIsButtonIsDisabled = ({
+export const verifyIfButtonIsDisabled = ({
   sut,
   elementTestId,
   isDisabled,

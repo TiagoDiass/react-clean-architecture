@@ -6,7 +6,7 @@ import SignUp from './SignUp';
 import { Helper, ValidationStub } from '@/presentation/test';
 
 // Helpers
-const { verifyElementChildCount, verifyInputStatus, verifyIsButtonIsDisabled, fillField } = Helper;
+const { verifyElementChildCount, verifyInputStatus, verifyIfButtonIsDisabled, fillField } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -34,7 +34,7 @@ describe('SignUp View', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
 
     verifyInputStatus({ sut, fieldName: 'name', validationError });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
@@ -104,5 +104,15 @@ describe('SignUp View', () => {
 
     fillField({ sut, fieldName: 'passwordConfirmation' });
     verifyInputStatus({ sut, fieldName: 'passwordConfirmation' });
+  });
+
+  it('should enable the submit button if form is valid', () => {
+    const { sut } = makeSut();
+
+    fillField({ sut, fieldName: 'name' });
+    fillField({ sut, fieldName: 'email' });
+    fillField({ sut, fieldName: 'password' });
+    fillField({ sut, fieldName: 'passwordConfirmation' });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 });

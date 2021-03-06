@@ -13,16 +13,17 @@ const SignUp: React.FC<Props> = ({ validation }) => {
     isLoading: false,
 
     name: '',
-    nameError: 'Campo obrigatório',
+    nameError: '',
 
     email: '',
-    emailError: 'Campo obrigatório',
+    emailError: '',
 
     password: '',
-    passwordError: 'Campo obrigatório',
+    passwordError: '',
 
     passwordConfirmation: '',
-    passwordConfirmationError: 'Campo obrigatório',
+    passwordConfirmationError: '',
+
     mainError: '',
   });
 
@@ -39,6 +40,14 @@ const SignUp: React.FC<Props> = ({ validation }) => {
     });
   }, [state.name, state.email, state.password, state.passwordConfirmation]);
 
+  const isThereAnError = !!(
+    state.mainError ||
+    state.nameError ||
+    state.emailError ||
+    state.passwordError ||
+    state.passwordConfirmationError
+  );
+
   return (
     <div className={Styles.signup}>
       <Header />
@@ -52,7 +61,7 @@ const SignUp: React.FC<Props> = ({ validation }) => {
           <BaseInput type='password' name='password' placeholder='Digite sua senha' />
           <BaseInput type='password' name='passwordConfirmation' placeholder='Confirme sua senha' />
 
-          <button data-testid='submit' type='submit' disabled>
+          <button data-testid='submit' type='submit' disabled={isThereAnError}>
             Entrar
           </button>
 

@@ -16,7 +16,7 @@ import {
 } from '@/presentation/test';
 
 // Helpers
-const { verifyElementChildCount, verifyIsButtonIsDisabled, verifyInputStatus, fillField } = Helper;
+const { verifyElementChildCount, verifyIfButtonIsDisabled, verifyInputStatus, fillField } = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -73,7 +73,7 @@ describe('Login Component', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
     verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
@@ -125,7 +125,7 @@ describe('Login Component', () => {
     fillField({ sut, fieldName: 'email' });
     fillField({ sut, fieldName: 'password' });
 
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 
   it('should show the loading spinner and disable the submit button on form submit', () => {
@@ -135,7 +135,7 @@ describe('Login Component', () => {
 
     const loadingSpinner = sut.getByTestId('loading-spinner');
     expect(loadingSpinner).toBeTruthy();
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 
   it('should call Authentication with correct values', () => {
