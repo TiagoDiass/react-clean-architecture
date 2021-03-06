@@ -3,9 +3,8 @@ import faker from 'faker';
 import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
 
 import SignUp from './SignUp';
-import { Helper, ValidationStub } from '@/presentation/test';
-import { AddAccount, AddAccountParams } from '@/domain/usecases';
-import { AccountModel } from '@/domain/models';
+import { AddAccountSpy, Helper, ValidationStub } from '@/presentation/test';
+import { AddAccountParams } from '@/domain/usecases';
 
 type SutTypes = {
   sut: RenderResult;
@@ -29,15 +28,6 @@ const makeSut = (params?: SutParams): SutTypes => {
     addAccountSpy,
   };
 };
-
-class AddAccountSpy implements AddAccount {
-  params: AddAccountParams;
-
-  add(params: AddAccountParams): Promise<AccountModel> {
-    this.params = params;
-    return null;
-  }
-}
 
 // Helpers
 const {
@@ -172,7 +162,6 @@ describe('SignUp View', () => {
     const { sut, addAccountSpy } = makeSut();
 
     const password = faker.internet.password();
-
     const params: AddAccountParams = {
       name: faker.name.findName(),
       email: faker.internet.email(),
