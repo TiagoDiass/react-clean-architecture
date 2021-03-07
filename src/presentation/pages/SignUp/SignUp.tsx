@@ -102,7 +102,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
           <BaseInput type='password' name='passwordConfirmation' placeholder='Confirme sua senha' />
 
           <button data-testid='submit' type='submit' disabled={isThereAnError || state.isLoading}>
-            Entrar
+            Cadastrar
           </button>
 
           <Link to='/login' data-testid='login-link' className={Styles.link}>
