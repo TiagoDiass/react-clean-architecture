@@ -30,7 +30,7 @@ describe('ValidationComposite', () => {
     fieldValidationSpies[0].error = new Error(errorMessage);
     fieldValidationSpies[1].error = new Error('second_error_message');
 
-    const validationError = sut.validate(fieldName, faker.random.word());
+    const validationError = sut.validate(fieldName, { [fieldName]: faker.random.word() });
 
     expect(validationError).toBe(errorMessage);
   });
@@ -38,7 +38,7 @@ describe('ValidationComposite', () => {
   it('should return falsy if all validation succeeds', () => {
     const fieldName = faker.database.column();
     const { sut } = makeSut(fieldName);
-    const validationError = sut.validate(fieldName, faker.random.word());
+    const validationError = sut.validate(fieldName, { [fieldName]: faker.random.word() });
 
     expect(validationError).toBeFalsy();
   });
