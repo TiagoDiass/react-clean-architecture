@@ -5,8 +5,25 @@ import faker from 'faker';
 import { render, RenderResult, fireEvent, cleanup, waitFor } from '@testing-library/react';
 
 import Login from './Login';
-import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub } from '@/presentation/test';
+
 import { InvalidCredentialsError } from '@/domain/errors';
+
+import {
+  AuthenticationSpy,
+  SaveAccessTokenMock,
+  ValidationStub,
+  Helper,
+} from '@/presentation/test';
+
+// Helpers
+const {
+  verifyElementChildCount,
+  verifyIfButtonIsDisabled,
+  verifyInputStatus,
+  fillField,
+  verifyIfElementExists,
+  verifyElementText,
+} = Helper;
 
 type SutTypes = {
   sut: RenderResult;
@@ -49,62 +66,23 @@ const simulateValidSubmit = (
   email = faker.internet.email(),
   password = faker.internet.password()
 ): void => {
-  fillEmailField(sut, email);
-  fillPasswordField(sut, password);
+  fillField({ sut, fieldName: 'email', value: email });
+  fillField({ sut, fieldName: 'password', value: password });
 
   const submitButton = sut.getByTestId('submit') as HTMLButtonElement;
   fireEvent.click(submitButton);
 };
 
-const fillEmailField = (sut: RenderResult, email = faker.internet.email()): void => {
-  const emailInput = sut.getByTestId('email-input');
-  fireEvent.input(emailInput, { target: { value: email } });
-};
-
-const fillPasswordField = (sut: RenderResult, password = faker.internet.password()): void => {
-  const passwordInput = sut.getByTestId('password-input');
-  fireEvent.input(passwordInput, { target: { value: password } });
-};
-
-type VerifyInputStatusParams = {
-  sut: RenderResult;
-  fieldName: string;
-  validationError?: string;
-};
-
-const verifyInputStatus = ({ sut, fieldName, validationError }: VerifyInputStatusParams): void => {
-  const inputStatus = sut.getByTestId(`${fieldName}-status`);
-  expect(inputStatus.title).toBe(validationError || 'Tudo certo!');
-  expect(inputStatus.textContent).toBe(validationError ? '🔴' : '🟢');
-};
-
-type VerifyIfButtonIsDisabledParams = {
-  sut: RenderResult;
-  elementTestId: string;
-  isDisabled: boolean;
-};
-
-const verifyIsButtonIsDisabled = ({
-  sut,
-  elementTestId,
-  isDisabled,
-}: VerifyIfButtonIsDisabledParams): void => {
-  const button = sut.getByTestId(elementTestId) as HTMLButtonElement;
-  expect(button.disabled).toBe(isDisabled);
-};
-
 describe('Login Component', () => {
   afterEach(cleanup);
 
-  it('should not render Spinner and error on start', () => {
-    const { sut } = makeSut();
-    const errorWrapper = sut.getByTestId('error-wrapper');
-    expect(errorWrapper.childElementCount).toBe(0);
-  });
-
-  it('should disable the submit button on Login start because fields are not valid yet', () => {
-    const { sut } = makeSut({ validationError: faker.random.words() });
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+  it('should start with initial state', () => {
+    const validationError = faker.random.words();
+    const { sut } = makeSut({ validationError });
+    verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyInputStatus({ sut, fieldName: 'email', validationError });
+    verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
 
   it('should start with empty email and password inputs', () => {
@@ -116,19 +94,11 @@ describe('Login Component', () => {
     expect(passwordInput.value).toBe('');
   });
 
-  it('should start email and passoword inputs with an "invalid" state', () => {
-    const validationError = faker.random.words();
-    const { sut } = makeSut({ validationError });
-
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
-  });
-
   it('should show an email error if validation fails', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
 
-    fillEmailField(sut);
+    fillField({ sut, fieldName: 'email' });
     verifyInputStatus({ sut, fieldName: 'email', validationError });
   });
 
@@ -136,7 +106,7 @@ describe('Login Component', () => {
     const validationError = faker.random.words();
     const { sut } = makeSut({ validationError });
 
-    fillPasswordField(sut);
+    fillField({ sut, fieldName: 'password' });
 
     verifyInputStatus({ sut, fieldName: 'password', validationError });
   });
@@ -144,25 +114,25 @@ describe('Login Component', () => {
   it('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut();
 
-    fillEmailField(sut);
-
+    fillField({ sut, fieldName: 'email' });
     verifyInputStatus({ sut, fieldName: 'email' });
   });
 
   it('should show valid password state if validation succeeds', () => {
     const { sut } = makeSut();
 
-    fillPasswordField(sut);
+    fillField({ sut, fieldName: 'password' });
 
     verifyInputStatus({ sut, fieldName: 'password' });
   });
 
   it('should enable the submit button if form state is valid', () => {
     const { sut } = makeSut();
-    fillEmailField(sut);
-    fillPasswordField(sut);
 
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
+    fillField({ sut, fieldName: 'email' });
+    fillField({ sut, fieldName: 'password' });
+
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: false });
   });
 
   it('should show the loading spinner and disable the submit button on form submit', () => {
@@ -170,9 +140,8 @@ describe('Login Component', () => {
 
     simulateValidSubmit(sut);
 
-    const loadingSpinner = sut.getByTestId('loading-spinner');
-    expect(loadingSpinner).toBeTruthy();
-    verifyIsButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
+    verifyIfElementExists({ sut, elementTestId: 'loading-spinner' });
+    verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
   });
 
   it('should call Authentication with correct values', () => {
@@ -188,13 +157,21 @@ describe('Login Component', () => {
     });
   });
 
+  it('should call Authentication only once', async () => {
+    const { sut, authenticationSpy } = makeSut();
+
+    await simulateValidSubmit(sut);
+    await simulateValidSubmit(sut);
+
+    expect(authenticationSpy.callsCount).toBe(1);
+  });
+
   // Teste pra previnir que o form tenha um submit de uma forma manual, como no console do browser
-  it('should prevent the submit of the form if there is an error', () => {
+  it('should not call Authentication if form is invalid', async () => {
     const validationError = faker.random.words();
     const { sut, authenticationSpy } = makeSut({ validationError });
 
-    fillEmailField(sut);
-    fireEvent.submit(sut.getByTestId('form'));
+    await simulateValidSubmit(sut);
     expect(authenticationSpy.callsCount).toBe(0);
   });
 
@@ -203,7 +180,7 @@ describe('Login Component', () => {
 
     const error = new InvalidCredentialsError();
 
-    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error));
+    jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error);
 
     simulateValidSubmit(sut);
 
@@ -211,11 +188,10 @@ describe('Login Component', () => {
 
     await waitFor(() => errorWrapper);
 
-    const mainError = sut.getByTestId('main-error');
-    expect(mainError.textContent).toBe(error.message);
+    verifyElementText({ sut, elementTestId: 'main-error', text: error.message });
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
-    expect(errorWrapper.childElementCount).toBe(1);
+    verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 1 });
   });
 
   it('should call SaveAccessToken if Authentication succeeds', async () => {
