@@ -71,27 +71,6 @@ describe('Login', () => {
     cy.url().should('equal', `${baseUrl}/login`);
   });
 
-  it('should save accessToken and redirects to home page if valid credentials are provided', () => {
-    cy.intercept('POST', /login/, {
-      statusCode: 200,
-      body: {
-        accessToken: faker.random.uuid(),
-      },
-    });
-
-    cy.getByTestId('email-input').type('mango@gmail.com');
-    cy.getByTestId('password-input').type('12345');
-
-    cy.getByTestId('submit').click();
-
-    cy.getByTestId('main-error').should('not.exist');
-    cy.getByTestId('loading-spinner').should('not.exist');
-
-    cy.url().should('equal', `${baseUrl}/`);
-
-    cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
-  });
-
   it('should present an UnexpectedError on response of status 400', () => {
     cy.intercept('POST', /login/, {
       statusCode: 400,
@@ -112,5 +91,48 @@ describe('Login', () => {
     );
 
     cy.url().should('equal', `${baseUrl}/login`);
+  });
+
+  it('should present an UnexpectedError if an invalid property has been returned by the api', () => {
+    cy.intercept('POST', /login/, {
+      statusCode: 200,
+      body: {
+        invalidProperty: faker.random.words(),
+      },
+    });
+
+    cy.getByTestId('email-input').type(faker.internet.email());
+    cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
+
+    cy.getByTestId('submit').click();
+
+    cy.getByTestId('loading-spinner').should('not.exist');
+    cy.getByTestId('main-error').should(
+      'contain.text',
+      'Parece que algo de errado aconteceu. Tente novamente em breve.'
+    );
+
+    cy.url().should('equal', `${baseUrl}/login`);
+  });
+
+  it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    cy.intercept('POST', /login/, {
+      statusCode: 200,
+      body: {
+        accessToken: faker.random.uuid(),
+      },
+    });
+
+    cy.getByTestId('email-input').type('mango@gmail.com');
+    cy.getByTestId('password-input').type('12345');
+
+    cy.getByTestId('submit').click();
+
+    cy.getByTestId('main-error').should('not.exist');
+    cy.getByTestId('loading-spinner').should('not.exist');
+
+    cy.url().should('equal', `${baseUrl}/`);
+
+    cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
   });
 });
