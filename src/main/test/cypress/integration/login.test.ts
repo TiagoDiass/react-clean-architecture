@@ -52,7 +52,7 @@ describe('Login', () => {
     cy.getByTestId('error-wrapper').should('not.have.descendants');
   });
 
-  it('should present an error if invalid credentials are provided', () => {
+  it('should present an InvalidCredentialsError on response of status 401', () => {
     cy.intercept('POST', /login/, {
       statusCode: 401,
       body: {
@@ -90,5 +90,27 @@ describe('Login', () => {
     cy.url().should('equal', `${baseUrl}/`);
 
     cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+  });
+
+  it('should present an UnexpectedError on response of status 400', () => {
+    cy.intercept('POST', /login/, {
+      statusCode: 400,
+      body: {
+        error: faker.random.words(),
+      },
+    });
+
+    cy.getByTestId('email-input').type(faker.internet.email());
+    cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
+
+    cy.getByTestId('submit').click();
+
+    cy.getByTestId('loading-spinner').should('not.exist');
+    cy.getByTestId('main-error').should(
+      'contain.text',
+      'Parece que algo de errado aconteceu. Tente novamente em breve.'
+    );
+
+    cy.url().should('equal', `${baseUrl}/login`);
   });
 });
