@@ -53,37 +53,39 @@ describe('Login', () => {
   });
 
   it('should present an error if invalid credentials are provided', () => {
+    cy.intercept('POST', /login/, {
+      statusCode: 401,
+      body: {
+        error: faker.random.words(),
+      },
+    });
+
     cy.getByTestId('email-input').type(faker.internet.email());
     cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
 
     cy.getByTestId('submit').click();
 
-    cy.getByTestId('error-wrapper')
-      .getByTestId('loading-spinner')
-      .should('exist')
-      .getByTestId('main-error')
-      .should('not.exist')
-      .getByTestId('loading-spinner')
-      .should('not.exist')
-      .getByTestId('main-error')
-      .should('contain.text', 'Credenciais inválidas');
+    cy.getByTestId('loading-spinner').should('not.exist');
+    cy.getByTestId('main-error').should('contain.text', 'Credenciais inválidas');
 
     cy.url().should('equal', `${baseUrl}/login`);
   });
 
   it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    cy.intercept('POST', /login/, {
+      statusCode: 200,
+      body: {
+        accessToken: faker.random.uuid(),
+      },
+    });
+
     cy.getByTestId('email-input').type('mango@gmail.com');
     cy.getByTestId('password-input').type('12345');
 
     cy.getByTestId('submit').click();
 
-    cy.getByTestId('error-wrapper')
-      .getByTestId('loading-spinner')
-      .should('exist')
-      .getByTestId('main-error')
-      .should('not.exist')
-      .getByTestId('loading-spinner')
-      .should('not.exist');
+    cy.getByTestId('main-error').should('not.exist');
+    cy.getByTestId('loading-spinner').should('not.exist');
 
     cy.url().should('equal', `${baseUrl}/`);
 
