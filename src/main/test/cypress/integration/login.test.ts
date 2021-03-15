@@ -70,4 +70,23 @@ describe('Login', () => {
 
     cy.url().should('equal', `${baseUrl}/login`);
   });
+
+  it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    cy.getByTestId('email-input').type('mango@gmail.com');
+    cy.getByTestId('password-input').type('12345');
+
+    cy.getByTestId('submit').click();
+
+    cy.getByTestId('error-wrapper')
+      .getByTestId('loading-spinner')
+      .should('exist')
+      .getByTestId('main-error')
+      .should('not.exist')
+      .getByTestId('loading-spinner')
+      .should('not.exist');
+
+    cy.url().should('equal', `${baseUrl}/`);
+
+    cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+  });
 });
