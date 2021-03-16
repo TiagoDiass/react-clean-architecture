@@ -99,7 +99,7 @@ describe('Login', () => {
     cy.getByTestId('error-wrapper').should('not.have.descendants');
   });
 
-  describe('using mocked API responses', () => {
+  describe('intercepting requests', () => {
     it('should save accessToken and redirects to home page if valid credentials are provided', () => {
       testSaveAccessTokenAndRedirectsToHome(true);
     });
@@ -163,9 +163,21 @@ describe('Login', () => {
       cy.getByTestId('submit').dblclick();
       cy.get('@request.all').should('have.length', 1);
     });
+
+    it('should prevent submit if form is invalid', () => {
+      cy.intercept('POST', /login/, {
+        statusCode: 200,
+        body: {
+          accessToken: faker.random.uuid(),
+        },
+      }).as('request');
+
+      cy.getByTestId('email-input').type(faker.internet.email()).type('{enter}');
+      cy.get('@request.all').should('have.length', 0);
+    });
   });
 
-  describe('not using mocked API responses(connecting to the real API)', () => {
+  describe('not intercepting requests (real API)', () => {
     it('should save accessToken and redirects to home page if valid credentials are provided', () => {
       testSaveAccessTokenAndRedirectsToHome(false);
     });
