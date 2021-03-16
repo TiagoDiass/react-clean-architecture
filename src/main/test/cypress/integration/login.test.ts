@@ -33,8 +33,11 @@ function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
     });
   }
 
-  cy.getByTestId('email-input').type('mango@gmail.com');
-  cy.getByTestId('password-input').type('12345');
+  const email = intercepRequest ? faker.internet.email() : 'mango@gmail.com';
+  const password = intercepRequest ? faker.random.alphaNumeric(6) : '12345';
+
+  cy.getByTestId('email-input').type(email);
+  cy.getByTestId('password-input').type(password);
 
   cy.getByTestId('submit').click();
 
