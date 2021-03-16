@@ -100,6 +100,10 @@ describe('Login', () => {
   });
 
   describe('using mocked API responses', () => {
+    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+      testSaveAccessTokenAndRedirectsToHome(true);
+    });
+
     it('should present an InvalidCredentialsError on response of status 401', () => {
       testInvalidCredentialsOnStatus401(true);
     });
@@ -148,10 +152,6 @@ describe('Login', () => {
       cy.url().should('equal', `${baseUrl}/login`);
     });
 
-    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
-      testSaveAccessTokenAndRedirectsToHome(true);
-    });
-
     it('should prevent multiple submits', () => {
       cy.intercept('POST', /login/, {
         statusCode: 200,
@@ -168,12 +168,12 @@ describe('Login', () => {
   });
 
   describe('not using mocked API responses(connecting to the real API)', () => {
-    it('should present an InvalidCredentialsError on response of status 401', () => {
-      testInvalidCredentialsOnStatus401(false);
-    });
-
     it('should save accessToken and redirects to home page if valid credentials are provided', () => {
       testSaveAccessTokenAndRedirectsToHome(false);
+    });
+
+    it('should present an InvalidCredentialsError on response of status 401', () => {
+      testInvalidCredentialsOnStatus401(false);
     });
   });
 });
