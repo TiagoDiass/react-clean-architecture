@@ -23,6 +23,29 @@ function testInvalidCredentialsOnStatus401(intercepRequest: boolean) {
   cy.url().should('equal', `${baseUrl}/login`);
 }
 
+function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
+  if (intercepRequest) {
+    cy.intercept('POST', /login/, {
+      statusCode: 200,
+      body: {
+        accessToken: faker.random.uuid(),
+      },
+    });
+  }
+
+  cy.getByTestId('email-input').type('mango@gmail.com');
+  cy.getByTestId('password-input').type('12345');
+
+  cy.getByTestId('submit').click();
+
+  cy.getByTestId('main-error').should('not.exist');
+  cy.getByTestId('loading-spinner').should('not.exist');
+
+  cy.url().should('equal', `${baseUrl}/`);
+
+  cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+}
+
 describe('Login', () => {
   beforeEach(() => {
     cy.visit('login');
@@ -123,30 +146,17 @@ describe('Login', () => {
     });
 
     it('should save accessToken and redirects to home page if valid credentials are provided', () => {
-      cy.intercept('POST', /login/, {
-        statusCode: 200,
-        body: {
-          accessToken: faker.random.uuid(),
-        },
-      });
-
-      cy.getByTestId('email-input').type('mango@gmail.com');
-      cy.getByTestId('password-input').type('12345');
-
-      cy.getByTestId('submit').click();
-
-      cy.getByTestId('main-error').should('not.exist');
-      cy.getByTestId('loading-spinner').should('not.exist');
-
-      cy.url().should('equal', `${baseUrl}/`);
-
-      cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+      testSaveAccessTokenAndRedirectsToHome(true);
     });
   });
 
-  describe('connecting to the real API', () => {
+  describe('not using mocked API responses(connecting to the real API)', () => {
     it('should present an InvalidCredentialsError on response of status 401', () => {
       testInvalidCredentialsOnStatus401(false);
+    });
+
+    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+      testSaveAccessTokenAndRedirectsToHome(false);
     });
   });
 });
