@@ -139,9 +139,7 @@ describe('Login', () => {
       });
 
       cy.getByTestId('email-input').type(faker.internet.email());
-      cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
-
-      cy.getByTestId('submit').click();
+      cy.getByTestId('password-input').type(faker.random.alphaNumeric(5)).type('{enter}');
 
       cy.getByTestId('loading-spinner').should('not.exist');
       cy.getByTestId('main-error').should(
