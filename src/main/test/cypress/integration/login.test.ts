@@ -55,13 +55,13 @@ describe('Login', () => {
   });
 
   it('should load with correct initial state', () => {
-    cy.getByTestId('email-status')
-      .should('have.attr', 'title', 'Campo obrigatório')
-      .should('contain.text', '🔴');
+    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'initial');
+    cy.getByTestId('email-input').should('have.attr', 'title', 'Campo obrigatório');
+    cy.getByTestId('email-label').should('have.attr', 'title', 'Campo obrigatório');
 
-    cy.getByTestId('password-status')
-      .should('have.attr', 'title', 'Campo obrigatório')
-      .should('contain.text', '🔴');
+    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'initial');
+    cy.getByTestId('password-input').should('have.attr', 'title', 'Campo obrigatório');
+    cy.getByTestId('password-label').should('have.attr', 'title', 'Campo obrigatório');
 
     cy.getByTestId('submit').should('have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
@@ -71,14 +71,16 @@ describe('Login', () => {
 
   it('should present an error state if form is invalid', () => {
     cy.getByTestId('email-input').type(faker.random.word());
-    cy.getByTestId('email-status')
-      .should('have.attr', 'title', 'Valor inválido')
-      .should('contain.text', '🔴');
+    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'invalid');
+    cy.getByTestId('email-input').should('have.attr', 'title', 'Valor inválido');
+    cy.getByTestId('email-label').should('have.attr', 'title', 'Valor inválido');
+    cy.getByTestId('email-small').should('contain.text', 'Valor inválido');
 
     cy.getByTestId('password-input').type(faker.random.alphaNumeric(3));
-    cy.getByTestId('password-status')
-      .should('have.attr', 'title', 'Valor inválido')
-      .should('contain.text', '🔴');
+    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'invalid');
+    cy.getByTestId('password-input').should('have.attr', 'title', 'Valor inválido');
+    cy.getByTestId('password-label').should('have.attr', 'title', 'Valor inválido');
+    cy.getByTestId('password-small').should('contain.text', 'Valor inválido');
 
     cy.getByTestId('submit').should('have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
@@ -86,14 +88,16 @@ describe('Login', () => {
 
   it('should present a valid state if form is valid', () => {
     cy.getByTestId('email-input').type(faker.internet.email());
-    cy.getByTestId('email-status')
-      .should('have.attr', 'title', 'Tudo certo!')
-      .should('contain.text', '🟢');
+    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'valid');
+    cy.getByTestId('email-small').should('not.exist');
+    cy.getByTestId('email-input').should('not.have.attr', 'title');
+    cy.getByTestId('email-label').should('not.have.attr', 'title');
 
     cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
-    cy.getByTestId('password-status')
-      .should('have.attr', 'title', 'Tudo certo!')
-      .should('contain.text', '🟢');
+    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'valid');
+    cy.getByTestId('password-small').should('not.exist');
+    cy.getByTestId('password-input').should('not.have.attr', 'title');
+    cy.getByTestId('password-label').should('not.have.attr', 'title');
 
     cy.getByTestId('submit').should('not.have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');

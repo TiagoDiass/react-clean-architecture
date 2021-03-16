@@ -81,8 +81,8 @@ describe('Login Component', () => {
     const { sut } = makeSut({ validationError });
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
+    verifyInputStatus({ sut, fieldName: 'email', validationError, inputStatus: 'initial' });
+    verifyInputStatus({ sut, fieldName: 'password', validationError, inputStatus: 'initial' });
   });
 
   it('should start with empty email and password inputs', () => {
@@ -99,7 +99,7 @@ describe('Login Component', () => {
     const { sut } = makeSut({ validationError });
 
     fillField({ sut, fieldName: 'email' });
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
+    verifyInputStatus({ sut, fieldName: 'email', validationError, inputStatus: 'invalid' });
   });
 
   it('should show a password error if validation fails', () => {
@@ -108,14 +108,14 @@ describe('Login Component', () => {
 
     fillField({ sut, fieldName: 'password' });
 
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
+    verifyInputStatus({ sut, fieldName: 'password', validationError, inputStatus: 'invalid' });
   });
 
   it('should show valid email state if validation succeeds', () => {
     const { sut } = makeSut();
 
     fillField({ sut, fieldName: 'email' });
-    verifyInputStatus({ sut, fieldName: 'email' });
+    verifyInputStatus({ sut, fieldName: 'email', inputStatus: 'valid' });
   });
 
   it('should show valid password state if validation succeeds', () => {
@@ -123,7 +123,7 @@ describe('Login Component', () => {
 
     fillField({ sut, fieldName: 'password' });
 
-    verifyInputStatus({ sut, fieldName: 'password' });
+    verifyInputStatus({ sut, fieldName: 'password', inputStatus: 'valid' });
   });
 
   it('should enable the submit button if form state is valid', () => {

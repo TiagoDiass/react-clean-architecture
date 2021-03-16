@@ -6,11 +6,27 @@ $borderBottomSize: 2px;
   position: relative;
   border-bottom: $borderBottomSize solid $disabledColor;
 
+  &[data-status='valid'] {
+    border-bottom-color: $valid;
+
+    &::after {
+      background-color: $valid;
+    }
+  }
+
+  &[data-status='invalid'] {
+    border-bottom-color: $invalid;
+
+    &::after {
+      background-color: $invalid;
+    }
+  }
+
   &::after {
     content: '';
     width: 100%;
     height: $borderBottomSize;
-    background-color: $primaryLight;
+    background-color: $disabledColor;
     position: absolute;
     bottom: -$borderBottomSize;
     left: 0;
@@ -60,10 +76,11 @@ $borderBottomSize: 2px;
     transition: transform 0.4s ease;
   }
 
-  .status {
+  small {
     position: absolute;
-    right: 8px;
-    font-size: 10px;
-    cursor: help;
+    left: 0;
+    bottom: -20px;
+    font-size: 11px;
+    color: $invalid;
   }
 }

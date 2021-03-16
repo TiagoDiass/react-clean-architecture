@@ -86,13 +86,14 @@ describe('SignUp View', () => {
     verifyElementChildCount({ sut, elementTestId: 'error-wrapper', expectedCount: 0 });
     verifyIfButtonIsDisabled({ sut, elementTestId: 'submit', isDisabled: true });
 
-    verifyInputStatus({ sut, fieldName: 'name', validationError });
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
+    verifyInputStatus({ sut, fieldName: 'name', validationError, inputStatus: 'initial' });
+    verifyInputStatus({ sut, fieldName: 'email', validationError, inputStatus: 'initial' });
+    verifyInputStatus({ sut, fieldName: 'password', validationError, inputStatus: 'initial' });
     verifyInputStatus({
       sut,
       fieldName: 'passwordConfirmation',
       validationError,
+      inputStatus: 'initial',
     });
   });
 
@@ -101,7 +102,7 @@ describe('SignUp View', () => {
     const { sut } = makeSut({ validationError });
 
     fillField({ sut, fieldName: 'name' });
-    verifyInputStatus({ sut, fieldName: 'name', validationError });
+    verifyInputStatus({ sut, fieldName: 'name', validationError, inputStatus: 'invalid' });
   });
 
   it('should show an email error if Validation fails', () => {
@@ -109,7 +110,7 @@ describe('SignUp View', () => {
     const { sut } = makeSut({ validationError });
 
     fillField({ sut, fieldName: 'email' });
-    verifyInputStatus({ sut, fieldName: 'email', validationError });
+    verifyInputStatus({ sut, fieldName: 'email', validationError, inputStatus: 'invalid' });
   });
 
   it('should show a password error if Validation fails', () => {
@@ -117,7 +118,7 @@ describe('SignUp View', () => {
     const { sut } = makeSut({ validationError });
 
     fillField({ sut, fieldName: 'password' });
-    verifyInputStatus({ sut, fieldName: 'password', validationError });
+    verifyInputStatus({ sut, fieldName: 'password', validationError, inputStatus: 'invalid' });
   });
 
   it('should show a password confirmation error if Validation fails', () => {
@@ -125,35 +126,40 @@ describe('SignUp View', () => {
     const { sut } = makeSut({ validationError });
 
     fillField({ sut, fieldName: 'passwordConfirmation' });
-    verifyInputStatus({ sut, fieldName: 'passwordConfirmation', validationError });
+    verifyInputStatus({
+      sut,
+      fieldName: 'passwordConfirmation',
+      validationError,
+      inputStatus: 'invalid',
+    });
   });
 
   it('should show valid name state if Validation succeeds', () => {
     const { sut } = makeSut();
 
     fillField({ sut, fieldName: 'name' });
-    verifyInputStatus({ sut, fieldName: 'name' });
+    verifyInputStatus({ sut, fieldName: 'name', inputStatus: 'valid' });
   });
 
   it('should show valid email state if Validation succeeds', () => {
     const { sut } = makeSut();
 
     fillField({ sut, fieldName: 'email' });
-    verifyInputStatus({ sut, fieldName: 'email' });
+    verifyInputStatus({ sut, fieldName: 'email', inputStatus: 'valid' });
   });
 
   it('should show valid password state if Validation succeeds', () => {
     const { sut } = makeSut();
 
     fillField({ sut, fieldName: 'password' });
-    verifyInputStatus({ sut, fieldName: 'password' });
+    verifyInputStatus({ sut, fieldName: 'password', inputStatus: 'valid' });
   });
 
   it('should show valid passwordConfirmation state if Validation succeeds', () => {
     const { sut } = makeSut();
 
     fillField({ sut, fieldName: 'passwordConfirmation' });
-    verifyInputStatus({ sut, fieldName: 'passwordConfirmation' });
+    verifyInputStatus({ sut, fieldName: 'passwordConfirmation', inputStatus: 'valid' });
   });
 
   it('should enable the submit button if form is valid', () => {
