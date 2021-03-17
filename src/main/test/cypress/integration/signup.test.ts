@@ -1,5 +1,23 @@
-import { verifyInputStatus } from '../support/form-helper';
+import { verifyCurrentUrl, verifyInputStatus, verifyMainError } from '../support/form-helper';
 import faker from 'faker';
+
+type SimulateValidSubmitParams = {
+  name?: string;
+  email?: string;
+  password?: string;
+};
+
+function simulateValidSubmit({
+  name = faker.name.findName(),
+  email = faker.internet.email(),
+  password = faker.random.alphaNumeric(7),
+}: SimulateValidSubmitParams) {
+  cy.getByTestId('name-input').type(name);
+  cy.getByTestId('email-input').type(email);
+  cy.getByTestId('password-input').type(password);
+  cy.getByTestId('passwordConfirmation-input').type(password);
+  cy.getByTestId('submit').click();
+}
 
 describe('SignUp', () => {
   beforeEach(() => {
@@ -57,5 +75,21 @@ describe('SignUp', () => {
 
     cy.getByTestId('submit').should('not.have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
+  });
+
+  describe('intercepting requests', () => {
+    it('should present an EmailInUseError on 403', () => {
+      cy.intercept('POST', /signup/, {
+        statusCode: 403,
+        body: {
+          error: faker.random.words(),
+        },
+      });
+
+      simulateValidSubmit({});
+
+      verifyMainError('Email já cadastrado');
+      verifyCurrentUrl('/signup');
+    });
   });
 });
