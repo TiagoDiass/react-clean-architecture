@@ -136,5 +136,23 @@ describe('SignUp', () => {
 
       verifyCurrentUrl('/signup');
     });
+
+    it('should prevent multiple submits', () => {
+      cy.intercept('POST', /signup/, {
+        statusCode: 200,
+        body: {
+          accessToken: faker.random.uuid(),
+        },
+      }).as('request');
+
+      const password = faker.random.alphaNumeric(5);
+      cy.getByTestId('name-input').type(faker.name.findName());
+      cy.getByTestId('email-input').type(faker.internet.email());
+      cy.getByTestId('password-input').type(password);
+      cy.getByTestId('passwordConfirmation-input').type(password);
+      cy.getByTestId('submit').dblclick();
+
+      cy.get('@request.all').should('have.length', 1);
+    });
   });
 });
