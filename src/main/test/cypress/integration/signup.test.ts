@@ -1,5 +1,6 @@
 import { verifyCurrentUrl, verifyInputStatus, verifyMainError } from '../support/form-helper';
 import faker from 'faker';
+import { mockUnexpectedError } from '../support/http-mocks';
 
 type SimulateValidSubmitParams = {
   name?: string;
@@ -89,6 +90,16 @@ describe('SignUp', () => {
       simulateValidSubmit({});
 
       verifyMainError('Email já cadastrado');
+      verifyCurrentUrl('/signup');
+    });
+
+    it('should present an UnexpectedError on default error cases', () => {
+      mockUnexpectedError({ url: /signup/, method: 'POST' });
+
+      simulateValidSubmit({});
+
+      verifyMainError('Parece que algo de errado aconteceu. Tente novamente em breve.');
+
       verifyCurrentUrl('/signup');
     });
   });
