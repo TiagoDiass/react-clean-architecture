@@ -39,4 +39,23 @@ describe('SignUp', () => {
     cy.getByTestId('submit').should('have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
   });
+
+  it('should present a valid state if form is valid', () => {
+    cy.getByTestId('name-input').type(faker.name.findName());
+    verifyInputStatus({ fieldName: 'name', inputStatus: 'valid' });
+
+    cy.getByTestId('email-input').type(faker.internet.email());
+    verifyInputStatus({ fieldName: 'email', inputStatus: 'valid' });
+
+    const password = faker.random.alphaNumeric(5);
+
+    cy.getByTestId('password-input').type(password);
+    verifyInputStatus({ fieldName: 'password', inputStatus: 'valid' });
+
+    cy.getByTestId('passwordConfirmation-input').type(password);
+    verifyInputStatus({ fieldName: 'password', inputStatus: 'valid' });
+
+    cy.getByTestId('submit').should('not.have.attr', 'disabled');
+    cy.getByTestId('error-wrapper').should('not.have.descendants');
+  });
 });
