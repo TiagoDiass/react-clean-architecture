@@ -79,7 +79,7 @@ describe('SignUp', () => {
   });
 
   describe('intercepting requests', () => {
-    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    it('should save accessToken and redirects to home page if valid data are provided', () => {
       cy.intercept('POST', /signup/, {
         statusCode: 200,
         body: {
