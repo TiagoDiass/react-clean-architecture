@@ -20,6 +20,10 @@ $borderBottomSize: 2px;
     &::after {
       background-color: $invalid;
     }
+
+    label {
+      color: $invalid;
+    }
   }
 
   &::after {
