@@ -1,6 +1,6 @@
+import { verifyInputStatus, verifyMainError, verifyCurrentUrl } from '../support/form-helper';
+import { mockUnexpectedError } from '../support/http-mocks';
 import faker from 'faker';
-
-const baseUrl: string = Cypress.config().baseUrl;
 
 function testInvalidCredentialsOnStatus401(intercepRequest: boolean) {
   if (intercepRequest) {
@@ -12,15 +12,11 @@ function testInvalidCredentialsOnStatus401(intercepRequest: boolean) {
     });
   }
 
-  cy.getByTestId('email-input').type(faker.internet.email());
-  cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
+  simulateValidSubmit({});
 
-  cy.getByTestId('submit').click();
+  verifyMainError('Credenciais inválidas');
 
-  cy.getByTestId('loading-spinner').should('not.exist');
-  cy.getByTestId('main-error').should('contain.text', 'Credenciais inválidas');
-
-  cy.url().should('equal', `${baseUrl}/login`);
+  verifyCurrentUrl('/login');
 }
 
 function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
@@ -33,20 +29,32 @@ function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
     });
   }
 
-  const email = intercepRequest ? faker.internet.email() : 'mango@gmail.com';
-  const password = intercepRequest ? faker.random.alphaNumeric(6) : '12345';
+  simulateValidSubmit({
+    email: intercepRequest ? faker.internet.email() : 'mango@gmail.com',
+    password: intercepRequest ? faker.random.alphaNumeric(6) : '12345',
+  });
 
-  cy.getByTestId('email-input').type(email);
-  cy.getByTestId('password-input').type(password);
-
-  cy.getByTestId('submit').click();
-
+  // mesma coisa que checar se o error-wrapper não tem descendants
   cy.getByTestId('main-error').should('not.exist');
   cy.getByTestId('loading-spinner').should('not.exist');
 
-  cy.url().should('equal', `${baseUrl}/`);
+  verifyCurrentUrl('/');
 
   cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+}
+
+type SimulateValidSubmitParams = {
+  email?: string;
+  password?: string;
+};
+
+function simulateValidSubmit({
+  email = faker.internet.email(),
+  password = faker.random.alphaNumeric(5),
+}: SimulateValidSubmitParams) {
+  cy.getByTestId('email-input').type(email);
+  cy.getByTestId('password-input').type(password);
+  cy.getByTestId('submit').click();
 }
 
 describe('Login', () => {
@@ -55,13 +63,10 @@ describe('Login', () => {
   });
 
   it('should load with correct initial state', () => {
-    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'initial');
-    cy.getByTestId('email-input').should('have.attr', 'title', 'Campo obrigatório');
-    cy.getByTestId('email-label').should('have.attr', 'title', 'Campo obrigatório');
+    const error = 'Campo obrigatório';
 
-    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'initial');
-    cy.getByTestId('password-input').should('have.attr', 'title', 'Campo obrigatório');
-    cy.getByTestId('password-label').should('have.attr', 'title', 'Campo obrigatório');
+    verifyInputStatus({ fieldName: 'email', inputStatus: 'initial', error });
+    verifyInputStatus({ fieldName: 'password', inputStatus: 'initial', error });
 
     cy.getByTestId('submit').should('have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
@@ -70,17 +75,13 @@ describe('Login', () => {
   });
 
   it('should present an error state if form is invalid', () => {
+    const error = 'Valor inválido';
+
     cy.getByTestId('email-input').type(faker.random.word());
-    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'invalid');
-    cy.getByTestId('email-input').should('have.attr', 'title', 'Valor inválido');
-    cy.getByTestId('email-label').should('have.attr', 'title', 'Valor inválido');
-    cy.getByTestId('email-small').should('contain.text', 'Valor inválido');
+    verifyInputStatus({ fieldName: 'email', error, inputStatus: 'invalid' });
 
     cy.getByTestId('password-input').type(faker.random.alphaNumeric(3));
-    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'invalid');
-    cy.getByTestId('password-input').should('have.attr', 'title', 'Valor inválido');
-    cy.getByTestId('password-label').should('have.attr', 'title', 'Valor inválido');
-    cy.getByTestId('password-small').should('contain.text', 'Valor inválido');
+    verifyInputStatus({ fieldName: 'password', error, inputStatus: 'invalid' });
 
     cy.getByTestId('submit').should('have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
@@ -88,16 +89,10 @@ describe('Login', () => {
 
   it('should present a valid state if form is valid', () => {
     cy.getByTestId('email-input').type(faker.internet.email());
-    cy.getByTestId('email-wrapper').should('have.attr', 'data-status', 'valid');
-    cy.getByTestId('email-small').should('not.exist');
-    cy.getByTestId('email-input').should('not.have.attr', 'title');
-    cy.getByTestId('email-label').should('not.have.attr', 'title');
+    verifyInputStatus({ fieldName: 'email', inputStatus: 'valid' });
 
     cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
-    cy.getByTestId('password-wrapper').should('have.attr', 'data-status', 'valid');
-    cy.getByTestId('password-small').should('not.exist');
-    cy.getByTestId('password-input').should('not.have.attr', 'title');
-    cy.getByTestId('password-label').should('not.have.attr', 'title');
+    verifyInputStatus({ fieldName: 'password', inputStatus: 'valid' });
 
     cy.getByTestId('submit').should('not.have.attr', 'disabled');
     cy.getByTestId('error-wrapper').should('not.have.descendants');
@@ -112,26 +107,14 @@ describe('Login', () => {
       testInvalidCredentialsOnStatus401(true);
     });
 
-    it('should present an UnexpectedError on response of status 400', () => {
-      cy.intercept('POST', /login/, {
-        statusCode: 400,
-        body: {
-          error: faker.random.words(),
-        },
-      });
+    it('should present an UnexpectedError on default error cases', () => {
+      mockUnexpectedError({ url: /login/, method: 'POST' });
 
-      cy.getByTestId('email-input').type(faker.internet.email());
-      cy.getByTestId('password-input').type(faker.random.alphaNumeric(5));
+      simulateValidSubmit({});
 
-      cy.getByTestId('submit').click();
+      verifyMainError('Parece que algo de errado aconteceu. Tente novamente em breve.');
 
-      cy.getByTestId('loading-spinner').should('not.exist');
-      cy.getByTestId('main-error').should(
-        'contain.text',
-        'Parece que algo de errado aconteceu. Tente novamente em breve.'
-      );
-
-      cy.url().should('equal', `${baseUrl}/login`);
+      verifyCurrentUrl('/login');
     });
 
     it('should present an UnexpectedError if an invalid property has been returned by the api', () => {
@@ -142,16 +125,11 @@ describe('Login', () => {
         },
       });
 
-      cy.getByTestId('email-input').type(faker.internet.email());
-      cy.getByTestId('password-input').type(faker.random.alphaNumeric(5)).type('{enter}');
+      simulateValidSubmit({});
 
-      cy.getByTestId('loading-spinner').should('not.exist');
-      cy.getByTestId('main-error').should(
-        'contain.text',
-        'Parece que algo de errado aconteceu. Tente novamente em breve.'
-      );
+      verifyMainError('Parece que algo de errado aconteceu. Tente novamente em breve.');
 
-      cy.url().should('equal', `${baseUrl}/login`);
+      verifyCurrentUrl('/login');
     });
 
     it('should prevent multiple submits', () => {
