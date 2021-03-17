@@ -2,6 +2,28 @@ import { verifyCurrentUrl, verifyInputStatus, verifyMainError } from '../support
 import { mockUnexpectedError } from '../support/http-mocks';
 import faker from 'faker';
 
+function testEmailInUseErrorOn403(intercepRequest: boolean) {
+  if (intercepRequest) {
+    cy.intercept('POST', /signup/, {
+      statusCode: 403,
+      body: {
+        error: faker.random.words(),
+      },
+    });
+  }
+
+  simulateValidSubmit(
+    intercepRequest
+      ? {}
+      : {
+          email: 'mango@gmail.com',
+        }
+  );
+
+  verifyMainError('Email já cadastrado');
+  verifyCurrentUrl('/signup');
+}
+
 type SimulateValidSubmitParams = {
   name?: string;
   email?: string;
@@ -79,6 +101,7 @@ describe('SignUp', () => {
   });
 
   describe('intercepting requests', () => {
+    // Não vou fazer esse teste batendo na API de verdade porque pode floodar o banco do Manguinho...
     it('should save accessToken and redirects to home page if valid data are provided', () => {
       cy.intercept('POST', /signup/, {
         statusCode: 200,
@@ -99,17 +122,7 @@ describe('SignUp', () => {
     });
 
     it('should present an EmailInUseError on 403', () => {
-      cy.intercept('POST', /signup/, {
-        statusCode: 403,
-        body: {
-          error: faker.random.words(),
-        },
-      });
-
-      simulateValidSubmit({});
-
-      verifyMainError('Email já cadastrado');
-      verifyCurrentUrl('/signup');
+      testEmailInUseErrorOn403(true);
     });
 
     it('should present an UnexpectedError on default error cases', () => {
@@ -165,6 +178,12 @@ describe('SignUp', () => {
 
       cy.getByTestId('email-input').type(faker.internet.email()).type('{enter}');
       cy.get('@request.all').should('have.length', 0);
+    });
+  });
+
+  describe('not intercepting requests (real API)', () => {
+    it('should present an EmailInUseError on 403', () => {
+      testEmailInUseErrorOn403(false);
     });
   });
 });
