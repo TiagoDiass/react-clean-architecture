@@ -49,7 +49,6 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
   }, [state.name, state.email, state.password, state.passwordConfirmation]);
 
   const isThereAnError = !!(
-    state.mainError ||
     state.nameError ||
     state.emailError ||
     state.passwordError ||

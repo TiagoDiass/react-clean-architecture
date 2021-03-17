@@ -23,6 +23,7 @@ type VerifyInputStatusParams = {
   sut: RenderResult;
   fieldName: string;
   validationError?: string;
+  inputStatus: 'initial' | 'valid' | 'invalid';
 };
 
 /**
@@ -31,11 +32,21 @@ type VerifyInputStatusParams = {
 export const verifyInputStatus = ({
   sut,
   fieldName,
-  validationError,
+  validationError = '',
+  inputStatus,
 }: VerifyInputStatusParams): void => {
-  const inputStatus = sut.getByTestId(`${fieldName}-status`);
-  expect(inputStatus.title).toBe(validationError || 'Tudo certo!');
-  expect(inputStatus.textContent).toBe(validationError ? '🔴' : '🟢');
+  const inputWrapper = sut.getByTestId(`${fieldName}-wrapper`);
+  const input = sut.getByTestId(`${fieldName}-input`);
+  const inputLabel = sut.getByTestId(`${fieldName}-label`);
+
+  expect(inputWrapper.getAttribute('data-status')).toBe(inputStatus);
+  expect(input.title).toBe(validationError);
+  expect(inputLabel.title).toBe(validationError);
+
+  if (inputStatus === 'invalid') {
+    const inputSmall = sut.getByTestId(`${fieldName}-small`);
+    expect(inputSmall.textContent).toBe(validationError);
+  }
 };
 
 type VerifyIfButtonIsDisabledParams = {
@@ -71,6 +82,7 @@ export const fillField = ({
   value = faker.random.word(),
 }: FillFieldParams): void => {
   const inputElement = sut.getByTestId(`${fieldName}-input`);
+  fireEvent.focus(inputElement);
   fireEvent.input(inputElement, { target: { value } });
 };
 
