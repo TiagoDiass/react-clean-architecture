@@ -1,6 +1,6 @@
 import { verifyCurrentUrl, verifyInputStatus, verifyMainError } from '../support/form-helper';
-import faker from 'faker';
 import { mockUnexpectedError } from '../support/http-mocks';
+import faker from 'faker';
 
 type SimulateValidSubmitParams = {
   name?: string;
@@ -95,6 +95,21 @@ describe('SignUp', () => {
 
     it('should present an UnexpectedError on default error cases', () => {
       mockUnexpectedError({ url: /signup/, method: 'POST' });
+
+      simulateValidSubmit({});
+
+      verifyMainError('Parece que algo de errado aconteceu. Tente novamente em breve.');
+
+      verifyCurrentUrl('/signup');
+    });
+
+    it('should present an UnexpectedError if an invalid property has been returned by the api', () => {
+      cy.intercept('POST', /signup/, {
+        statusCode: 200,
+        body: {
+          invalidProperty: faker.random.words(),
+        },
+      });
 
       simulateValidSubmit({});
 
