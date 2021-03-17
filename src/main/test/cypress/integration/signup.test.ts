@@ -79,6 +79,25 @@ describe('SignUp', () => {
   });
 
   describe('intercepting requests', () => {
+    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+      cy.intercept('POST', /signup/, {
+        statusCode: 200,
+        body: {
+          accessToken: faker.random.uuid(),
+        },
+      });
+
+      simulateValidSubmit({});
+
+      // mesma coisa que checar se o error-wrapper não tem descendants
+      cy.getByTestId('main-error').should('not.exist');
+      cy.getByTestId('loading-spinner').should('not.exist');
+
+      verifyCurrentUrl('/');
+
+      cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+    });
+
     it('should present an EmailInUseError on 403', () => {
       cy.intercept('POST', /signup/, {
         statusCode: 403,
