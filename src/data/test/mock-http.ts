@@ -28,6 +28,10 @@ export class HttpPostClientSpy<R> implements HttpPostClient<R> {
   }
 }
 
+export const mockGetRequest = (): HttpGetParams => ({
+  url: faker.internet.url(),
+});
+
 export class HttpGetClientSpy implements HttpGetClient {
   url: string;
 

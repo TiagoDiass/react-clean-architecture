@@ -1,6 +1,6 @@
 import { AxiosHttpClient } from './axios-http-client';
 import { mockAxios, mockHttpResponse } from '@/infra/test';
-import { mockPostRequest } from '@/data/test';
+import { mockGetRequest, mockPostRequest } from '@/data/test';
 import axios from 'axios';
 
 jest.mock('axios');
@@ -48,6 +48,15 @@ describe('AxiosHttpClient', () => {
 
       // Value mocked in the axios post method
       expect(promise).toEqual(mockedAxios.post.mock.results[0].value);
+    });
+  });
+
+  describe('GET', () => {
+    it('should call axios.get with correct values', async () => {
+      const request = mockGetRequest();
+      const { sut, mockedAxios } = makeSut();
+      await sut.get(request);
+      expect(mockedAxios.get).toHaveBeenCalledWith(request.url);
     });
   });
 });
