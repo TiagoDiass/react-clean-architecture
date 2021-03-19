@@ -70,7 +70,7 @@ describe('RemoteLoadSurveyList', () => {
     const httpResult = mockSurveyListModel();
 
     httpGetClientSpy.response = {
-      statusCode: 200,
+      statusCode: HttpStatusCode.ok,
       body: httpResult,
     };
 
