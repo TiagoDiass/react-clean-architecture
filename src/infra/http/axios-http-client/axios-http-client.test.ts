@@ -74,5 +74,18 @@ describe('AxiosHttpClient', () => {
         body: axiosResponse.data,
       });
     });
+
+    it('should return the correct error on failure of axios.get', () => {
+      const { sut, mockedAxios } = makeSut();
+
+      mockedAxios.get.mockRejectedValueOnce({
+        response: mockHttpResponse(),
+      });
+
+      const promise = sut.get(mockGetRequest());
+
+      // Value mocked in the axios post method
+      expect(promise).toEqual(mockedAxios.get.mock.results[0].value);
+    });
   });
 });
