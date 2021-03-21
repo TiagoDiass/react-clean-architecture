@@ -1,8 +1,8 @@
 import React from 'react';
 import Styles from './SurveyList.styles.scss';
 
-// import ThumbsUpIcon from '@/presentation/assets/icon-thumb-up.png';
-// import ThumbsDownIcon from '@/presentation/assets/icon-thumb-down.png';
+import ThumbsUpIcon from '@/presentation/assets/icon-thumb-up.png';
+import ThumbsDownIcon from '@/presentation/assets/icon-thumb-down.png';
 import { Header, Footer } from '@/presentation/components';
 
 const SurveyList: React.FC = () => {
@@ -17,7 +17,7 @@ const SurveyList: React.FC = () => {
           <li>
             <div className={Styles.surveyContent}>
               <div className={[Styles.iconWrapper, Styles.red].join(' ')}>
-                {/* <img src={ThumbsDownIcon} alt='' /> */}
+                <img src={ThumbsDownIcon} alt='' />
               </div>
 
               <time>
