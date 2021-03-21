@@ -1,0 +1,43 @@
+@import '../../styles/colors.scss';
+
+.headerWrapper {
+  background-color: $primary;
+  border-top: 40px solid $primaryDark;
+  display: flex;
+  justify-content: center;
+
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
+    max-width: 800px;
+    flex-grow: 1;
+    padding: 24px 40px;
+    align-items: center;
+
+    img {
+      width: 60px;
+    }
+
+    .logoutWrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      color: $white;
+
+      span {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      a {
+        color: $white;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
