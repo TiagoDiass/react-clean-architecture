@@ -46,6 +46,38 @@
         margin-bottom: 22px;
         box-shadow: 0 0 2px rgba($color: #000000, $alpha: 0.2);
 
+        &:empty {
+          overflow: hidden;
+          position: relative;
+          background-repeat: no-repeat;
+          background-image: linear-gradient(to right, $disabledBackground, $disabledBackground),
+            linear-gradient(to right, $disabledBackground, $disabledBackground),
+            linear-gradient(to right, $disabledBackground, $disabledBackground),
+            linear-gradient(to right, $disabledBackground, $disabledBackground),
+            linear-gradient(to right, $disabledBackground, $disabledBackground);
+
+          background-position: left 24px top 0, left 0 bottom 0, left 150px top 75px,
+            left 150px top 100px, left 150px top 125px;
+
+          background-size: 80px 100px, 100% 40px, 150px 16px, 140px 16px, 150px 16px;
+
+          &::after {
+            animation: shimmer 1.2s infinite ease;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: linear-gradient(
+              to right,
+              transparent,
+              rgba($white, $alpha: 0.2),
+              transparent
+            );
+          }
+        }
+
         .surveyContent {
           display: flex;
           justify-content: space-between;
@@ -130,5 +162,15 @@
     li {
       flex-basis: 100%;
     }
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
   }
 }
