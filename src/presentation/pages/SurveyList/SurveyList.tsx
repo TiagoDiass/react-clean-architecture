@@ -1,9 +1,9 @@
 import React from 'react';
 import Styles from './SurveyList.styles.scss';
+import { Header, Footer } from '@/presentation/components';
 
 import ThumbsUpIcon from '@/presentation/assets/icon-thumb-up.png';
 import ThumbsDownIcon from '@/presentation/assets/icon-thumb-down.png';
-import { Header, Footer } from '@/presentation/components';
 
 const SurveyList: React.FC = () => {
   return (
@@ -16,8 +16,8 @@ const SurveyList: React.FC = () => {
         <ul>
           <li>
             <div className={Styles.surveyContent}>
-              <div className={[Styles.iconWrapper, Styles.red].join(' ')}>
-                <img src={ThumbsDownIcon} alt='' />
+              <div className={[Styles.iconWrapper, 1 == 1 ? Styles.green : Styles.red].join(' ')}>
+                <img src={ThumbsUpIcon} alt='Thumbs Up icon' />
               </div>
 
               <time>
