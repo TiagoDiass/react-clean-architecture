@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Styles from './Login.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
-import { FormContext as Context } from '@/presentation/contexts';
+import { FormContext as Context, ApiContext } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
-import { Authentication, UpdateCurrentAccount } from '@/domain/usecases';
+import { Authentication } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
   authentication: Authentication;
-  updateCurrentAccount: UpdateCurrentAccount;
 };
 
-const Login: React.FC<Props> = ({ validation, authentication, updateCurrentAccount }) => {
+const Login: React.FC<Props> = ({ validation, authentication }) => {
+  const { setCurrentAccount } = useContext(ApiContext);
   const history = useHistory();
   const [state, setState] = useState({
     isLoading: false,
@@ -47,8 +47,8 @@ const Login: React.FC<Props> = ({ validation, authentication, updateCurrentAccou
 
       await authentication
         .auth({ email: state.email, password: state.password })
-        .then(async (account) => {
-          await updateCurrentAccount.update(account);
+        .then((account) => {
+          setCurrentAccount(account);
           history.replace('/');
         })
         .catch((error) => {
