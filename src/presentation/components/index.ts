@@ -1,4 +1,3 @@
-export { default as Router } from './Router/Router';
 export { default as Spinner } from './Spinner/Spinner';
 export { default as Logo } from './Logo/Logo';
 export { default as LoginHeader } from './LoginHeader/LoginHeader';
