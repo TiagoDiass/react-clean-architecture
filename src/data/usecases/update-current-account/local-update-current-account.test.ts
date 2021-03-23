@@ -1,7 +1,6 @@
 import { LocalUpdateCurrentAccount } from './local-update-current-account';
 import { SetStorageMock } from '@/data/test';
 import { UnexpectedError } from '@/domain/errors';
-import faker from 'faker';
 import { mockAccountModel } from '@/domain/test';
 
 type SutTypes = {
@@ -32,7 +31,9 @@ describe('LocalSaveAcessToken', () => {
 
   it('should throw if SetStorage throws an error', async () => {
     const { sut, setStorageMock } = makeSut();
-    jest.spyOn(setStorageMock, 'set').mockRejectedValueOnce(new Error());
+    jest.spyOn(setStorageMock, 'set').mockImplementationOnce(() => {
+      throw new Error();
+    });
 
     const promise = sut.update(mockAccountModel());
 
