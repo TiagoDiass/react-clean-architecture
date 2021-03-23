@@ -25,6 +25,7 @@ function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
       statusCode: 200,
       body: {
         accessToken: faker.random.uuid(),
+        name: faker.name.findName(),
       },
     });
   }
@@ -40,7 +41,7 @@ function testSaveAccessTokenAndRedirectsToHome(intercepRequest: boolean) {
 
   verifyCurrentUrl('/');
 
-  cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+  cy.window().then((window) => assert.isOk(window.localStorage.getItem('account')));
 }
 
 type SimulateValidSubmitParams = {
@@ -99,7 +100,7 @@ describe('Login', () => {
   });
 
   describe('intercepting requests', () => {
-    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    it('should save the returned account and redirects to home page if valid credentials are provided', () => {
       testSaveAccessTokenAndRedirectsToHome(true);
     });
 
@@ -160,7 +161,7 @@ describe('Login', () => {
   });
 
   describe('not intercepting requests (real API)', () => {
-    it('should save accessToken and redirects to home page if valid credentials are provided', () => {
+    it('should save the returned account and redirects to home page if valid credentials are provided', () => {
       testSaveAccessTokenAndRedirectsToHome(false);
     });
 

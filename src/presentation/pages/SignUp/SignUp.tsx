@@ -7,15 +7,15 @@ import Styles from './SignUp.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
 import { FormContext as Context } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
-import { AddAccount, SaveAccessToken } from '@/domain/usecases';
+import { AddAccount, UpdateCurrentAccount } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
   addAccount: AddAccount;
-  saveAccessToken: SaveAccessToken;
+  updateCurrentAccount: UpdateCurrentAccount;
 };
 
-const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) => {
+const SignUp: React.FC<Props> = ({ validation, addAccount, updateCurrentAccount }) => {
   const history = useHistory();
   const [state, setState] = useState({
     isLoading: false,
@@ -75,7 +75,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
         passwordConfirmation: state.passwordConfirmation,
       })
       .then(async (account) => {
-        await saveAccessToken.save(account.accessToken);
+        await updateCurrentAccount.update(account);
         history.replace('/');
       })
       .catch((error) => {

@@ -102,11 +102,12 @@ describe('SignUp', () => {
 
   describe('intercepting requests', () => {
     // Não vou fazer esse teste batendo na API de verdade porque pode floodar o banco do Manguinho...
-    it('should save accessToken and redirects to home page if valid data are provided', () => {
+    it('should save the returned account on local storage and redirects to home page if valid data are provided', () => {
       cy.intercept('POST', /signup/, {
         statusCode: 200,
         body: {
           accessToken: faker.random.uuid(),
+          name: faker.name.findName(),
         },
       });
 
@@ -118,7 +119,7 @@ describe('SignUp', () => {
 
       verifyCurrentUrl('/');
 
-      cy.window().then((window) => assert.isOk(window.localStorage.getItem('accessToken')));
+      cy.window().then((window) => assert.isOk(window.localStorage.getItem('account')));
     });
 
     it('should present an EmailInUseError on 403', () => {
