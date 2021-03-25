@@ -12,14 +12,7 @@ import { ApiContext } from '@/presentation/contexts';
 import { AccountModel } from '@/domain/models';
 
 // Helpers
-const {
-  verifyElementChildCount,
-  verifyIfButtonIsDisabled,
-  verifyInputStatus,
-  fillField,
-  verifyIfElementExists,
-  verifyElementText,
-} = Helper;
+const { verifyInputStatus, fillField } = Helper;
 
 type SutTypes = {
   authenticationSpy: AuthenticationSpy;
@@ -68,8 +61,8 @@ describe('Login Component', () => {
   it('should start with initial state', () => {
     const validationError = faker.random.words();
     makeSut({ validationError });
-    verifyElementChildCount({ elementTestId: 'error-wrapper', expectedCount: 0 });
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: true });
+    expect(screen.getByTestId('error-wrapper').children).toHaveLength(0);
+    expect(screen.getByTestId('submit')).toBeDisabled();
     verifyInputStatus({ fieldName: 'email', validationError, inputStatus: 'initial' });
     verifyInputStatus({ fieldName: 'password', validationError, inputStatus: 'initial' });
   });
@@ -121,7 +114,7 @@ describe('Login Component', () => {
     fillField({ fieldName: 'email' });
     fillField({ fieldName: 'password' });
 
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: false });
+    expect(screen.getByTestId('submit')).toBeEnabled();
   });
 
   it('should show the loading spinner and disable the submit button on form submit', () => {
@@ -129,8 +122,8 @@ describe('Login Component', () => {
 
     simulateValidSubmit();
 
-    verifyIfElementExists({ elementTestId: 'loading-spinner' });
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: true });
+    expect(screen.queryByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.getByTestId('submit')).toBeDisabled();
   });
 
   it('should call Authentication with correct values', () => {
@@ -177,10 +170,10 @@ describe('Login Component', () => {
 
     await waitFor(() => errorWrapper);
 
-    verifyElementText({ elementTestId: 'main-error', text: error.message });
+    expect(screen.getByTestId('main-error')).toHaveTextContent(error.message);
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
-    verifyElementChildCount({ elementTestId: 'error-wrapper', expectedCount: 1 });
+    expect(screen.getByTestId('error-wrapper').children).toHaveLength(1);
   });
 
   it('should call SaveAccessToken if Authentication succeeds', async () => {

@@ -43,14 +43,7 @@ const makeSut = (params?: SutParams): SutTypes => {
 };
 
 // Helpers
-const {
-  verifyElementChildCount,
-  verifyInputStatus,
-  verifyIfButtonIsDisabled,
-  fillField,
-  verifyIfElementExists,
-  verifyElementText,
-} = Helper;
+const { verifyInputStatus, fillField } = Helper;
 
 type SimulateValidSubmitParams = {
   name?: string;
@@ -77,8 +70,8 @@ describe('SignUp View', () => {
   it('should start with initial state', () => {
     const validationError = faker.random.words();
     makeSut({ validationError });
-    verifyElementChildCount({ elementTestId: 'error-wrapper', expectedCount: 0 });
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: true });
+    expect(screen.getByTestId('error-wrapper').children).toHaveLength(0);
+    expect(screen.getByTestId('submit')).toBeDisabled();
 
     verifyInputStatus({ fieldName: 'name', validationError, inputStatus: 'initial' });
     verifyInputStatus({ fieldName: 'email', validationError, inputStatus: 'initial' });
@@ -161,15 +154,15 @@ describe('SignUp View', () => {
     fillField({ fieldName: 'email' });
     fillField({ fieldName: 'password' });
     fillField({ fieldName: 'passwordConfirmation' });
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: false });
+    expect(screen.getByTestId('submit')).toBeEnabled();
   });
 
   it('should show spinner and disable the submit button on form submit', async () => {
     makeSut();
 
     await simulateValidSubmit({});
-    verifyIfElementExists({ elementTestId: 'loading-spinner' });
-    verifyIfButtonIsDisabled({ elementTestId: 'submit', isDisabled: true });
+    expect(screen.queryByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.getByTestId('submit')).toBeDisabled();
   });
 
   it('should call AddAccount with correct values', async () => {
@@ -215,10 +208,10 @@ describe('SignUp View', () => {
 
     await simulateValidSubmit({});
 
-    verifyElementText({ elementTestId: 'main-error', text: error.message });
+    expect(screen.getByTestId('main-error')).toHaveTextContent(error.message);
 
     // somente o main error deve estar por baixo do error wrapper, spinner tem que ter sumido
-    verifyElementChildCount({ elementTestId: 'error-wrapper', expectedCount: 1 });
+    expect(screen.getByTestId('error-wrapper').children).toHaveLength(1);
   });
 
   it('should call SaveAccessToken if AddAccount succeeds', async () => {
