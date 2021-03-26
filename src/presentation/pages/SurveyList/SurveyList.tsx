@@ -11,7 +11,9 @@ const SurveyList: React.FC = () => {
       <main className={Styles.contentWrapper}>
         <h2>Enquetes</h2>
 
-        <ul></ul>
+        <ul data-testid='survey-list'>
+          <SurveyItemEmpty />
+        </ul>
       </main>
 
       <Footer />
