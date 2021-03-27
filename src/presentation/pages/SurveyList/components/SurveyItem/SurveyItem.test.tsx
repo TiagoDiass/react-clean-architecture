@@ -3,15 +3,24 @@ import { render, screen } from '@testing-library/react';
 
 import SurveyItem from './SurveyItem';
 import { mockSurveyModel } from '@/domain/test';
+import { SurveyModel } from '@/domain/models';
+
+type MakeSutParams = {
+  survey: SurveyModel;
+};
+
+const makeSut = ({ survey = mockSurveyModel() }: MakeSutParams) => {
+  render(<SurveyItem survey={survey} />);
+};
 
 describe('SurveyItem Component', () => {
   it('should render the component correctly', () => {
-    const survey = mockSurveyModel();
+    const survey = Object.assign(mockSurveyModel(), {
+      didAnswer: true,
+      date: new Date('2021-03-27T00:00:00'),
+    });
 
-    survey.didAnswer = true;
-    survey.date = new Date('2021-03-27T00:00:00');
-
-    render(<SurveyItem survey={survey} />);
+    makeSut({ survey });
 
     expect(screen.getByTestId('survey-icon')).toHaveProperty('alt', 'Thumbs Up icon');
     expect(screen.getByTestId('survey-question')).toHaveTextContent(survey.question);
