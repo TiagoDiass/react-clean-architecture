@@ -12,13 +12,19 @@ type Props = {
 const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
   const [surveys, setSurveys] = useState<SurveyModel[]>([]);
   const [error, setError] = useState('');
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     loadSurveyList
       .loadAll()
       .then((surveys) => setSurveys(surveys))
       .catch((error) => setError(error.message));
-  }, []);
+  }, [reload]);
+
+  const handleReload = () => {
+    setSurveys([]);
+    setReload(!reload);
+  };
 
   return (
     <div className={Styles.surveyListWrapper}>
@@ -30,7 +36,7 @@ const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
         {error ? (
           <div>
             <span data-testid='error'>{error}</span>
-            <button>Recarregar</button>
+            <button onClick={handleReload}>Tentar novamente</button>
           </div>
         ) : (
           <ul data-testid='survey-list'>
