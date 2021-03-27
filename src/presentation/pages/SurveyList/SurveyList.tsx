@@ -1,20 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LoadSurveyList } from '@/domain/usecases';
 import Styles from './SurveyList.styles.scss';
 import { Header, Footer } from '@/presentation/components';
-import { SurveyItemEmpty } from './components';
+import { SurveyItem, SurveyItemEmpty } from './components';
+import { SurveyModel } from '@/domain/models';
 
 type Props = {
   loadSurveyList: LoadSurveyList;
 };
 
 const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
-  useEffect(() => {
-    async function load() {
-      await loadSurveyList.loadAll();
-    }
+  const [surveys, setSurveys] = useState<SurveyModel[]>([]);
 
-    load();
+  useEffect(() => {
+    loadSurveyList.loadAll().then((surveys) => setSurveys(surveys));
   }, []);
 
   return (
@@ -25,7 +24,11 @@ const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
         <h2>Enquetes</h2>
 
         <ul data-testid='survey-list'>
-          <SurveyItemEmpty />
+          {surveys.length ? (
+            surveys.map((survey) => <SurveyItem key={survey.id} survey={survey} />)
+          ) : (
+            <SurveyItemEmpty />
+          )}
         </ul>
       </main>
 
