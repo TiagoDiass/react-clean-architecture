@@ -22,7 +22,7 @@ describe('SurveyItem Component', () => {
 
     makeSut({ survey });
 
-    expect(screen.getByTestId('survey-icon')).toHaveProperty('alt', 'Thumbs Up icon');
+    expect(screen.getByAltText('Thumbs Up icon')).toBeInTheDocument();
     expect(screen.getByTestId('survey-question')).toHaveTextContent(survey.question);
     expect(screen.getByTestId('survey-day')).toHaveTextContent('27');
     expect(screen.getByTestId('survey-month')).toHaveTextContent('março');
@@ -37,7 +37,7 @@ describe('SurveyItem Component', () => {
 
     makeSut({ survey });
 
-    expect(screen.getByTestId('survey-icon')).toHaveProperty('alt', 'Thumbs Down icon');
+    expect(screen.getByAltText('Thumbs Down icon')).toBeInTheDocument();
     expect(screen.getByTestId('survey-question')).toHaveTextContent(survey.question);
     expect(screen.getByTestId('survey-day')).toHaveTextContent('03');
     expect(screen.getByTestId('survey-month')).toHaveTextContent('maio');

@@ -15,7 +15,6 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
       <div className={Styles.surveyContent}>
         <div className={[Styles.iconWrapper, 1 == 1 ? Styles.green : Styles.red].join(' ')}>
           <img
-            data-testid='survey-icon'
             src={survey.didAnswer ? ThumbsUpIcon : ThumbsDownIcon}
             alt={survey.didAnswer ? 'Thumbs Up icon' : 'Thumbs Down icon'}
           />
