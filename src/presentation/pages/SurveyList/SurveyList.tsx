@@ -35,7 +35,7 @@ const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
         <h2>Enquetes</h2>
 
         {error ? (
-          <div>
+          <div className={Styles.errorWrapper}>
             <span data-testid='error'>{error}</span>
             <button onClick={handleReload}>Tentar novamente</button>
           </div>
