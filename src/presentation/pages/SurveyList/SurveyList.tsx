@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LoadSurveyList } from '@/domain/usecases';
 import Styles from './SurveyList.styles.scss';
 import { Header, Footer } from '@/presentation/components';
-import { SurveyItem, SurveyItemEmpty } from './components';
+import { SurveyItem, SurveyListEmpty } from './components';
 import { SurveyModel } from '@/domain/models';
 
 type Props = {
@@ -35,9 +35,9 @@ const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
         ) : (
           <ul data-testid='survey-list'>
             {surveys.length ? (
-              surveys.map((survey) => <SurveyItem key={survey.id} survey={survey} />)
+              surveys.map((s) => <SurveyItem key={s.id} survey={s} />)
             ) : (
-              <SurveyItemEmpty />
+              <SurveyListEmpty />
             )}
           </ul>
         )}

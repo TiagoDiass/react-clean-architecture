@@ -1,2 +1,2 @@
 export { default as SurveyItem } from './SurveyItem/SurveyItem';
-export { default as SurveyItemEmpty } from './SurveyItemEmpty/SurveyItemEmpty';
+export { default as SurveyListEmpty } from './SurveyListEmpty/SurveyListEmpty';
