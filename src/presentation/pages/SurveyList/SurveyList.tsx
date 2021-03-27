@@ -23,6 +23,7 @@ const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
 
   const handleReload = () => {
     setSurveys([]);
+    setError('');
     setReload(!reload);
   };
 
