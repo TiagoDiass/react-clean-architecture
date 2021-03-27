@@ -14,12 +14,16 @@ const SurveyItem: React.FC<Props> = ({ survey }) => {
     <li className={Styles.surveyItemWrapper}>
       <div className={Styles.surveyContent}>
         <div className={[Styles.iconWrapper, 1 == 1 ? Styles.green : Styles.red].join(' ')}>
-          <img data-testid='survey-icon' src={ThumbsUpIcon} alt='Thumbs Up icon' />
+          <img
+            data-testid='survey-icon'
+            src={survey.didAnswer ? ThumbsUpIcon : ThumbsDownIcon}
+            alt={survey.didAnswer ? 'Thumbs Up icon' : 'Thumbs Down icon'}
+          />
         </div>
 
         <time>
           <span className={Styles.day} data-testid='survey-day'>
-            {survey.date.getDate()}
+            {survey.date.getDate().toString().padStart(2, '0')}
           </span>
           <span className={Styles.month} data-testid='survey-month'>
             {survey.date.toLocaleString('pt-BR', { month: 'long' })}
