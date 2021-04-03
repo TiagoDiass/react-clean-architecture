@@ -1,12 +1,10 @@
-import React from 'react';
 import Header from './Header';
 import { ApiContext } from '@/presentation/contexts';
-
+import { mockAccountModel } from '@/domain/test';
+import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
-import { mockAccountModel } from '@/domain/test';
-import { AccountModel } from '@/domain/models';
 
 const makeSut = (account = mockAccountModel()) => {
   const setCurrentAccoutnMock = jest.fn();
