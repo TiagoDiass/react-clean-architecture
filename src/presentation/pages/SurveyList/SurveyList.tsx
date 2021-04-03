@@ -3,14 +3,13 @@ import { LoadSurveyList } from '@/domain/usecases';
 import Styles from './SurveyList.styles.scss';
 import { Header, Footer } from '@/presentation/components';
 import { SurveyItem, SurveyListEmpty } from './components';
-import { SurveyModel } from '@/domain/models';
 
 type Props = {
   loadSurveyList: LoadSurveyList;
 };
 
 const SurveyList: React.FC<Props> = ({ loadSurveyList }) => {
-  const [surveys, setSurveys] = useState<SurveyModel[]>([]);
+  const [surveys, setSurveys] = useState<LoadSurveyList.Model[]>([]);
   const [error, setError] = useState('');
   const [reload, setReload] = useState(false);
 

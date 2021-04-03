@@ -3,10 +3,10 @@ import { render, screen } from '@testing-library/react';
 
 import SurveyItem from './SurveyItem';
 import { mockSurveyModel } from '@/domain/test';
-import { SurveyModel } from '@/domain/models';
+import { LoadSurveyList } from '@/domain/usecases';
 
 type MakeSutParams = {
-  survey: SurveyModel;
+  survey: LoadSurveyList.Model;
 };
 
 const makeSut = ({ survey = mockSurveyModel() }: MakeSutParams) => {

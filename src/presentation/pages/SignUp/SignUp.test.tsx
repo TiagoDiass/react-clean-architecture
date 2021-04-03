@@ -5,11 +5,12 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 
 import SignUp from './SignUp';
-import { AddAccountSpy, Helper, ValidationStub } from '@/presentation/test';
-import { AddAccountParams } from '@/domain/usecases';
-import { EmailInUseError } from '@/domain/errors';
+import { Helper, ValidationStub } from '@/presentation/test';
 import { ApiContext } from '@/presentation/contexts';
+import { AddAccount } from '@/domain/usecases';
+import { EmailInUseError } from '@/domain/errors';
 import { AccountModel } from '@/domain/models';
+import { AddAccountSpy } from '@/domain/test';
 
 type SutTypes = {
   addAccountSpy: AddAccountSpy;
@@ -169,7 +170,7 @@ describe('SignUp View', () => {
     const { addAccountSpy } = makeSut();
 
     const password = faker.internet.password();
-    const params: AddAccountParams = {
+    const params: AddAccount.Params = {
       name: faker.name.findName(),
       email: faker.internet.email(),
       password: password,

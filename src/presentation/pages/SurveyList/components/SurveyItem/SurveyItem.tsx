@@ -3,10 +3,10 @@ import Styles from './SurveyItem.styles.scss';
 
 import ThumbsUpIcon from '@/presentation/assets/icon-thumb-up.png';
 import ThumbsDownIcon from '@/presentation/assets/icon-thumb-down.png';
-import { SurveyModel } from '@/domain/models';
+import { LoadSurveyList } from '@/domain/usecases';
 
 type Props = {
-  survey: SurveyModel;
+  survey: LoadSurveyList.Model;
 };
 
 const SurveyItem: React.FC<Props> = ({ survey }) => {

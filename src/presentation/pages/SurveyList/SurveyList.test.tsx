@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SurveyList from './SurveyList';
 import { UnexpectedError } from '@/domain/errors';
-import { LoadSurveyListSpy } from '@/presentation/test';
+import { LoadSurveyListSpy } from '@/domain/test';
 
 const makeSut = (loadSurveyListSpy = new LoadSurveyListSpy()) => {
   render(<SurveyList loadSurveyList={loadSurveyListSpy} />);

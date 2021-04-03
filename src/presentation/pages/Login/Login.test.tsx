@@ -6,10 +6,11 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 
 import Login from './Login';
 
-import { InvalidCredentialsError } from '@/domain/errors';
-import { AuthenticationSpy, ValidationStub, Helper } from '@/presentation/test';
+import { ValidationStub, Helper } from '@/presentation/test';
 import { ApiContext } from '@/presentation/contexts';
 import { AccountModel } from '@/domain/models';
+import { InvalidCredentialsError } from '@/domain/errors';
+import { AuthenticationSpy } from '@/domain/test';
 
 // Helpers
 const { verifyInputStatus, fillField } = Helper;
