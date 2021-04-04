@@ -1,18 +1,14 @@
-import { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
 import { AccessDeniedError } from '@/domain/errors';
-import { ApiContext } from '../contexts';
+import { useLogout } from './useLogout';
 
 type CallbackType = (error: Error) => void;
 
 export const useErrorHandler = (callback: CallbackType) => {
-  const { setCurrentAccount } = useContext(ApiContext);
-  const history = useHistory();
+  const logout = useLogout();
 
   return (error: Error) => {
     if (error instanceof AccessDeniedError) {
-      setCurrentAccount(null);
-      history.replace('/login');
+      logout();
     } else {
       callback(error);
     }
