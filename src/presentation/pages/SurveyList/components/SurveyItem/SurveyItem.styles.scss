@@ -1,0 +1,94 @@
+@import '../../../../styles/colors.scss';
+
+li.surveyItemWrapper {
+  $borderRadiusItemSize: 10px;
+
+  background-color: $white;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: $borderRadiusItemSize;
+  flex-basis: 48%;
+  margin-bottom: 22px;
+  box-shadow: 0 0 2px rgba($color: #000000, $alpha: 0.2);
+
+  .surveyContent {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    position: relative;
+
+    .iconWrapper {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      padding: 10px;
+      border-radius: 50%;
+      display: flex;
+
+      &.red {
+        background-color: $invalid;
+      }
+
+      &.green {
+        background-color: $valid;
+      }
+    }
+
+    time {
+      display: flex;
+      flex-direction: column;
+      row-gap: 4px;
+      align-items: center;
+      justify-content: center;
+      background-color: $primaryLight;
+      color: $white;
+      border-radius: 0 0 6px 6px;
+      margin-left: 24px;
+      width: 80px;
+      height: 100px;
+      flex-shrink: 0;
+
+      .day {
+        font-size: 32px;
+        font-weight: bold;
+      }
+      .month {
+        text-transform: capitalize;
+
+        font-size: 16px;
+      }
+      .year {
+        font-size: 18px;
+      }
+    }
+
+    p {
+      font-size: 18px;
+      margin: 24px;
+      align-self: center;
+    }
+  }
+
+  footer {
+    color: $white;
+    font-size: 18px;
+    line-height: 40px;
+    background-color: $primaryLight;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-radius: 0 0 $borderRadiusItemSize $borderRadiusItemSize;
+
+    &:hover {
+      background-color: $primary;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  li.surveyItemWrapper {
+    flex-basis: 100%;
+  }
+}

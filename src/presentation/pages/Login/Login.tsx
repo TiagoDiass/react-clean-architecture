@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import Styles from './Login.styles.scss';
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
-import { FormContext as Context } from '@/presentation/contexts';
+import { FormContext as Context, ApiContext } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
-import { Authentication, SaveAccessToken } from '@/domain/usecases';
+import { Authentication } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
   authentication: Authentication;
-  saveAccessToken: SaveAccessToken;
 };
 
-const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken }) => {
+const Login: React.FC<Props> = ({ validation, authentication }) => {
+  const { setCurrentAccount } = useContext(ApiContext);
   const history = useHistory();
   const [state, setState] = useState({
     isLoading: false,
@@ -47,8 +47,8 @@ const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken })
 
       await authentication
         .auth({ email: state.email, password: state.password })
-        .then(async (account) => {
-          await saveAccessToken.save(account.accessToken);
+        .then((account) => {
+          setCurrentAccount(account);
           history.replace('/');
         })
         .catch((error) => {
@@ -62,7 +62,7 @@ const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken })
   };
 
   return (
-    <div className={Styles.login}>
+    <div className={Styles.loginWrapper}>
       <Header />
 
       <Context.Provider value={{ state, setState }}>

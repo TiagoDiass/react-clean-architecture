@@ -7,13 +7,35 @@ const makeSut = () => new LocalStorageAdapter();
 describe('LocalStorageAdapter', () => {
   beforeEach(localStorage.clear);
 
-  it('should call localStorage with correct values', async () => {
+  it('should call localStorage.setItem with correct values', () => {
     const sut = makeSut();
     const key = faker.database.column();
-    const value = faker.random.word();
+    const value = faker.random.objectElement<{}>();
 
-    await sut.set(key, value);
+    sut.set(key, value);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith(key, value);
+    expect(localStorage.setItem).toHaveBeenCalledWith(key, JSON.stringify(value));
+  });
+
+  it('should call localStorage.removeItem if adapter.set receives a falsy value', () => {
+    const sut = makeSut();
+    const key = faker.database.column();
+    sut.set(key, undefined);
+
+    expect(localStorage.removeItem).toHaveBeenCalledWith(key);
+  });
+
+  it('should call localStorage.getItem with correct value and receive the correct return', () => {
+    const sut = makeSut();
+    const key = faker.database.column();
+    const value = faker.random.objectElement<{}>();
+
+    const getItemSpy = jest
+      .spyOn(localStorage, 'getItem')
+      .mockReturnValueOnce(JSON.stringify(value));
+
+    const obj = sut.get(key);
+    expect(obj).toEqual(value);
+    expect(getItemSpy).toHaveBeenLastCalledWith(key);
   });
 });

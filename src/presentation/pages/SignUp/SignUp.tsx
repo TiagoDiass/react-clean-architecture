@@ -1,21 +1,21 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import Styles from './SignUp.styles.scss';
 
 import { LoginHeader as Header, Footer, BaseInput, FormStatus } from '@/presentation/components';
-import { FormContext as Context } from '@/presentation/contexts';
+import { FormContext as Context, ApiContext } from '@/presentation/contexts';
 import { Validation } from '@/presentation/protocols';
-import { AddAccount, SaveAccessToken } from '@/domain/usecases';
+import { AddAccount } from '@/domain/usecases';
 
 type Props = {
   validation: Validation;
   addAccount: AddAccount;
-  saveAccessToken: SaveAccessToken;
 };
 
-const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) => {
+const SignUp: React.FC<Props> = ({ validation, addAccount }) => {
+  const { setCurrentAccount } = useContext(ApiContext);
   const history = useHistory();
   const [state, setState] = useState({
     isLoading: false,
@@ -75,7 +75,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
         passwordConfirmation: state.passwordConfirmation,
       })
       .then(async (account) => {
-        await saveAccessToken.save(account.accessToken);
+        await setCurrentAccount(account);
         history.replace('/');
       })
       .catch((error) => {
@@ -88,7 +88,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }) =>
   };
 
   return (
-    <div className={Styles.signup}>
+    <div className={Styles.signupWrapper}>
       <Header />
 
       <Context.Provider value={{ state, setState }}>
